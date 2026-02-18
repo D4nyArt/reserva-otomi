@@ -1,0 +1,22 @@
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(request: NextRequest) {
+    const { password } = await request.json();
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminPassword) {
+        return NextResponse.json(
+            { error: "Admin password not configured on the server." },
+            { status: 500 }
+        );
+    }
+
+    if (password === adminPassword) {
+        return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json(
+        { error: "Contraseña incorrecta." },
+        { status: 401 }
+    );
+}

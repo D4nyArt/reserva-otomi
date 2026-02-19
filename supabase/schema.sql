@@ -74,6 +74,19 @@ CREATE POLICY "Allow authenticated update on highlight_cards"
   ON highlight_cards FOR UPDATE
   USING (true);
 
+-- Write access for events (admin)
+CREATE POLICY "Allow insert on events"
+  ON events FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Allow delete on events"
+  ON events FOR DELETE
+  USING (true);
+
+CREATE POLICY "Allow update on events"
+  ON events FOR UPDATE
+  USING (true);
+
 -- ─── Supabase Storage ───
 -- NOTE: You must manually create a PUBLIC bucket named "highlight-images"
 -- in your Supabase Dashboard → Storage → New Bucket

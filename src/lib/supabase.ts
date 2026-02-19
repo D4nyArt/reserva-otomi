@@ -127,3 +127,68 @@ export async function uploadHighlightImage(
 
     return publicUrl;
 }
+
+/* ─── Events CRUD ─── */
+
+export async function getEvents(category?: string): Promise<Event[]> {
+    if (!isConfigured) return [];
+
+    let query = supabase
+        .from("events")
+        .select("*")
+        .order("date", { ascending: true });
+
+    if (category) {
+        query = query.eq("category", category);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        console.error("Error fetching events:", error);
+        return [];
+    }
+
+    return data ?? [];
+}
+
+export async function addEvent(event: {
+    title: string;
+    description: string;
+    date: string;
+    category: string;
+    tags: string[];
+    image_url?: string | null;
+}): Promise<Event | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("events")
+        .insert(event)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error adding event:", error);
+        return null;
+    }
+
+    return data;
+}
+
+export async function deleteEvent(id: string): Promise<boolean> {
+    if (!isConfigured) return false;
+
+    const { error } = await supabase
+        .from("events")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error deleting event:", error);
+        return false;
+    }
+
+    return true;
+}
+

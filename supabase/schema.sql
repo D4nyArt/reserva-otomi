@@ -111,3 +111,62 @@ INSERT INTO highlight_cards (section, title, description, image_url, display_ord
   ('preservacion', 'Biodiversidad: Hongos', 'Documentamos y protegemos la extraordinaria diversidad de hongos del bosque de niebla.', '/images/hongos.png', 1),
   ('preservacion', 'Reforestación', 'Programas activos de reforestación con árboles nativos para restaurar los ecosistemas.', '/images/reforestacion.png', 2),
   ('preservacion', 'Conservación del Agua', 'Protegemos los manantiales, ríos y el embalse natural que abastecen a toda la región.', '/images/agua.png', 3);
+
+-- ═══════════════════════════════════════════
+-- Otomi Learning Tool — Scenarios & Elements
+-- ═══════════════════════════════════════════
+
+-- ─── Otomi Scenarios Table ───
+CREATE TABLE otomi_scenarios (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  subtitle TEXT NOT NULL,
+  bg_gradient TEXT NOT NULL DEFAULT 'linear-gradient(180deg, #87CEEB 0%, #F5DEB3 60%, #8B7355 100%)',
+  bg_image_url TEXT,
+  bg_emoji TEXT DEFAULT '🌿',
+  display_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ─── Otomi Elements Table ───
+CREATE TABLE otomi_elements (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  scenario_id UUID NOT NULL REFERENCES otomi_scenarios(id) ON DELETE CASCADE,
+  otomi_word TEXT NOT NULL,
+  spanish_word TEXT NOT NULL,
+  image_url TEXT,
+  emoji TEXT DEFAULT '❓',
+  position_x INT NOT NULL DEFAULT 50,
+  position_y INT NOT NULL DEFAULT 50,
+  display_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ─── Indexes ───
+CREATE INDEX idx_otomi_scenarios_order ON otomi_scenarios(display_order);
+CREATE INDEX idx_otomi_elements_scenario ON otomi_elements(scenario_id);
+
+-- ─── RLS ───
+ALTER TABLE otomi_scenarios ENABLE ROW LEVEL SECURITY;
+ALTER TABLE otomi_elements ENABLE ROW LEVEL SECURITY;
+
+-- Public read
+CREATE POLICY "Allow public read on otomi_scenarios"
+  ON otomi_scenarios FOR SELECT USING (true);
+CREATE POLICY "Allow public read on otomi_elements"
+  ON otomi_elements FOR SELECT USING (true);
+
+-- Write access
+CREATE POLICY "Allow insert on otomi_scenarios"
+  ON otomi_scenarios FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow update on otomi_scenarios"
+  ON otomi_scenarios FOR UPDATE USING (true);
+CREATE POLICY "Allow delete on otomi_scenarios"
+  ON otomi_scenarios FOR DELETE USING (true);
+
+CREATE POLICY "Allow insert on otomi_elements"
+  ON otomi_elements FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow update on otomi_elements"
+  ON otomi_elements FOR UPDATE USING (true);
+CREATE POLICY "Allow delete on otomi_elements"
+  ON otomi_elements FOR DELETE USING (true);

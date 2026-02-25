@@ -13,9 +13,10 @@ import {
     type HighlightCard,
     type Event,
 } from "@/lib/supabase";
+import EscenariosPanel from "./components/EscenariosPanel";
 
 type Section = "raices" | "preservacion";
-type AdminTab = "tarjetas" | "eventos";
+type AdminTab = "tarjetas" | "eventos" | "escenarios";
 
 const CATEGORIES = [
     { value: "ecoturismo", label: "Ecoturismo", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700" },
@@ -140,10 +141,10 @@ function ImageUpload({
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all ${isDragging
-                    ? "border-forest-400 bg-forest-400/10"
-                    : preview
-                        ? "border-forest-500/30 bg-forest-500/5"
-                        : "border-white/15 hover:border-white/30"
+                ? "border-forest-400 bg-forest-400/10"
+                : preview
+                    ? "border-forest-500/30 bg-forest-500/5"
+                    : "border-white/15 hover:border-white/30"
                 }`}
         >
             <input
@@ -397,8 +398,8 @@ function HighlightCardsPanel() {
                         key={section}
                         onClick={() => setActiveSection(section)}
                         className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${activeSection === section
-                                ? `bg-gradient-to-r ${sectionConfig[section].color} text-white shadow-lg`
-                                : "border border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                            ? `bg-gradient-to-r ${sectionConfig[section].color} text-white shadow-lg`
+                            : "border border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
                             }`}
                     >
                         {sectionConfig[section].label}
@@ -599,8 +600,8 @@ function CalendarMini({ events }: { events: Event[] }) {
                         <div
                             key={day}
                             className={`relative flex h-8 items-center justify-center rounded-lg text-xs transition-colors ${isToday
-                                    ? "bg-forest-500/20 font-bold text-forest-400"
-                                    : "text-white/50"
+                                ? "bg-forest-500/20 font-bold text-forest-400"
+                                : "text-white/50"
                                 } ${hasEvent ? "font-semibold text-white" : ""}`}
                         >
                             {day}
@@ -979,6 +980,14 @@ function AdminDashboard() {
                 </svg>
             ),
         },
+        escenarios: {
+            label: "Escenarios Otomí",
+            icon: (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A9.015 9.015 0 003 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+            ),
+        },
     };
 
     return (
@@ -1011,8 +1020,8 @@ function AdminDashboard() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all ${activeTab === tab
-                                    ? "bg-gradient-to-r from-forest-500 to-forest-700 text-white shadow-lg"
-                                    : "border border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                                ? "bg-gradient-to-r from-forest-500 to-forest-700 text-white shadow-lg"
+                                : "border border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
                                 }`}
                         >
                             {tabConfig[tab].icon}
@@ -1024,6 +1033,7 @@ function AdminDashboard() {
                 {/* Panel content */}
                 {activeTab === "tarjetas" && <HighlightCardsPanel />}
                 {activeTab === "eventos" && <EventsPanel />}
+                {activeTab === "escenarios" && <EscenariosPanel />}
             </div>
         </div>
     );

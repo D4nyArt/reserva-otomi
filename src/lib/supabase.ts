@@ -192,3 +192,233 @@ export async function deleteEvent(id: string): Promise<boolean> {
     return true;
 }
 
+/* ─── Otomi Learning Tool Types ─── */
+
+export interface OtomiScenario {
+    id: string;
+    title: string;
+    subtitle: string;
+    bg_gradient: string;
+    bg_image_url: string | null;
+    bg_emoji: string;
+    display_order: number;
+    created_at: string;
+}
+
+export interface OtomiElement {
+    id: string;
+    scenario_id: string;
+    otomi_word: string;
+    spanish_word: string;
+    image_url: string | null;
+    emoji: string;
+    position_x: number;
+    position_y: number;
+    display_order: number;
+    created_at: string;
+}
+
+/* ─── Otomi Scenarios CRUD ─── */
+
+export async function getOtomiScenarios(): Promise<OtomiScenario[]> {
+    if (!isConfigured) return [];
+
+    const { data, error } = await supabase
+        .from("otomi_scenarios")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+    if (error) {
+        console.error("Error fetching otomi scenarios:", error);
+        return [];
+    }
+
+    return data ?? [];
+}
+
+export async function addOtomiScenario(scenario: {
+    title: string;
+    subtitle: string;
+    bg_gradient: string;
+    bg_image_url?: string | null;
+    bg_emoji: string;
+    display_order?: number;
+}): Promise<OtomiScenario | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("otomi_scenarios")
+        .insert(scenario)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error adding otomi scenario:", error);
+        return null;
+    }
+
+    return data;
+}
+
+export async function updateOtomiScenario(
+    id: string,
+    updates: Partial<Omit<OtomiScenario, "id" | "created_at">>
+): Promise<boolean> {
+    if (!isConfigured) return false;
+
+    const { error } = await supabase
+        .from("otomi_scenarios")
+        .update(updates)
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error updating otomi scenario:", error);
+        return false;
+    }
+
+    return true;
+}
+
+export async function deleteOtomiScenario(id: string): Promise<boolean> {
+    if (!isConfigured) return false;
+
+    const { error } = await supabase
+        .from("otomi_scenarios")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error deleting otomi scenario:", error);
+        return false;
+    }
+
+    return true;
+}
+
+/* ─── Otomi Elements CRUD ─── */
+
+export async function getOtomiElements(scenarioId: string): Promise<OtomiElement[]> {
+    if (!isConfigured) return [];
+
+    const { data, error } = await supabase
+        .from("otomi_elements")
+        .select("*")
+        .eq("scenario_id", scenarioId)
+        .order("display_order", { ascending: true });
+
+    if (error) {
+        console.error("Error fetching otomi elements:", error);
+        return [];
+    }
+
+    return data ?? [];
+}
+
+export async function addOtomiElement(element: {
+    scenario_id: string;
+    otomi_word: string;
+    spanish_word: string;
+    emoji: string;
+    image_url?: string | null;
+    position_x: number;
+    position_y: number;
+    display_order?: number;
+}): Promise<OtomiElement | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("otomi_elements")
+        .insert(element)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error adding otomi element:", error);
+        return null;
+    }
+
+    return data;
+}
+
+export async function updateOtomiElement(
+    id: string,
+    updates: Partial<Omit<OtomiElement, "id" | "scenario_id" | "created_at">>
+): Promise<boolean> {
+    if (!isConfigured) return false;
+
+    const { error } = await supabase
+        .from("otomi_elements")
+        .update(updates)
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error updating otomi element:", error);
+        return false;
+    }
+
+    return true;
+}
+
+export async function deleteOtomiElement(id: string): Promise<boolean> {
+    if (!isConfigured) return false;
+
+    const { error } = await supabase
+        .from("otomi_elements")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error deleting otomi element:", error);
+        return false;
+    }
+
+    return true;
+}
+
+export async function uploadOtomiElementImage(
+    file: File
+): Promise<string | null> {
+    if (!isConfigured) return null;
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+
+    const { error } = await supabase.storage
+        .from("otomi-element-images")
+        .upload(fileName, file);
+
+    if (error) {
+        console.error("Error uploading otomi element image:", error);
+        return null;
+    }
+
+    const {
+        data: { publicUrl },
+    } = supabase.storage.from("otomi-element-images").getPublicUrl(fileName);
+
+    return publicUrl;
+}
+
+export async function uploadOtomiScenarioBgImage(
+    file: File
+): Promise<string | null> {
+    if (!isConfigured) return null;
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `bg-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+
+    const { error } = await supabase.storage
+        .from("otomi-element-images")
+        .upload(fileName, file);
+
+    if (error) {
+        console.error("Error uploading scenario background image:", error);
+        return null;
+    }
+
+    const {
+        data: { publicUrl },
+    } = supabase.storage.from("otomi-element-images").getPublicUrl(fileName);
+
+    return publicUrl;
+}

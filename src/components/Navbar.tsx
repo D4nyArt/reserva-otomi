@@ -23,8 +23,8 @@ export default function Navbar() {
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-                    ? "bg-forest-950/95 backdrop-blur-md shadow-lg py-3"
-                    : "bg-transparent py-5"
+                ? "bg-forest-950/95 backdrop-blur-md shadow-lg py-3"
+                : "bg-transparent py-5"
                 }`}
         >
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
@@ -47,6 +47,16 @@ export default function Navbar() {
                             {link.label}
                         </a>
                     ))}
+
+                    {/* 🔥 Nuevo Link Traductor */}
+                    <Link
+                        href="/traductor"
+                        className="relative text-sm font-medium text-white/80 transition-colors hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-forest-400 after:transition-all hover:after:w-full"
+                    >
+                        Traductor
+                    </Link>
+
+                    {/* Botón Contacto */}
                     <a
                         href="#contacto"
                         className="rounded-full bg-forest-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-forest-400 hover:shadow-forest-500/30 hover:shadow-xl active:scale-95"
@@ -79,8 +89,8 @@ export default function Navbar() {
             {/* Mobile Menu */}
             <div
                 className={`fixed inset-0 z-40 flex flex-col items-center justify-center bg-forest-950/98 backdrop-blur-xl transition-all duration-500 md:hidden ${isMobileOpen
-                        ? "pointer-events-auto opacity-100"
-                        : "pointer-events-none opacity-0"
+                    ? "pointer-events-auto opacity-100"
+                    : "pointer-events-none opacity-0"
                     }`}
             >
                 <div className="flex flex-col items-center gap-8">
@@ -95,6 +105,17 @@ export default function Navbar() {
                             {link.label}
                         </a>
                     ))}
+
+                    {/* 🔥 Traductor en Mobile */}
+                    <Link
+                        href="/traductor"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="font-heading text-3xl font-light text-white/90 transition-colors hover:text-forest-400"
+                    >
+                        Traductor
+                    </Link>
+
+                    {/* Contacto */}
                     <a
                         href="#contacto"
                         onClick={() => setIsMobileOpen(false)}

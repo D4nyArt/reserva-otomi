@@ -3,12 +3,20 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
+const CATEGORY_LABELS: Record<string, string> = {
+    ecoturismo: "Ecoturismo",
+    cultura: "Cultura",
+    talleres: "Talleres",
+    activismo: "Activismo",
+};
+
 interface SectionCardProps {
     image: string;
     title: string;
     description: string;
     tag?: string;
     tagColor?: string;
+    category?: string | null;
 }
 
 /* ─── Card Detail Modal ─── */
@@ -18,6 +26,7 @@ function CardModal({
     description,
     tag,
     tagColor,
+    category,
     onClose,
 }: SectionCardProps & { onClose: () => void }) {
     const handleKeyDown = useCallback(
@@ -35,6 +44,21 @@ function CardModal({
             document.body.style.overflow = "";
         };
     }, [handleKeyDown]);
+
+    const handleViewEvents = () => {
+        onClose();
+        // Dispatch custom event so Eventos component sets its filter
+        window.dispatchEvent(
+            new CustomEvent("filterEvents", { detail: { category } })
+        );
+        // Scroll to the eventos section
+        const eventosSection = document.getElementById("eventos");
+        if (eventosSection) {
+            eventosSection.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
+    const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null;
 
     return (
         <div
@@ -82,13 +106,26 @@ function CardModal({
                 </div>
 
                 {/* Content */}
-                <div className="px-7 pb-7 -mt-4 relative">
+                <div className="relative -mt-4 px-7 pb-7">
                     <h3 className="font-heading mb-3 text-2xl font-bold text-forest-900">
                         {title}
                     </h3>
                     <p className="text-sm leading-relaxed text-charcoal/70">
                         {description}
                     </p>
+
+                    {/* View Events button */}
+                    {category && (
+                        <button
+                            onClick={handleViewEvents}
+                            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-forest-500 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-forest-600 active:scale-[0.98]"
+                        >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                            </svg>
+                            Ver eventos de {categoryLabel}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
@@ -102,6 +139,7 @@ export default function SectionCard({
     description,
     tag,
     tagColor = "bg-forest-500",
+    category,
 }: SectionCardProps) {
     const [showModal, setShowModal] = useState(false);
 
@@ -156,6 +194,7 @@ export default function SectionCard({
                     description={description}
                     tag={tag}
                     tagColor={tagColor}
+                    category={category}
                     onClose={() => setShowModal(false)}
                 />
             )}

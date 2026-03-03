@@ -14,6 +14,7 @@ const fallbackRaices = [
         description:
             "Preservamos la lengua Otomí a través de talleres, materiales educativos y programas intergeneracionales.",
         display_order: 1,
+        category: "cultura",
         created_at: "",
     },
     {
@@ -24,6 +25,7 @@ const fallbackRaices = [
         description:
             "La cocina Otomí refleja siglos de sabiduría: ingredientes locales, técnicas prehispánicas y sabores únicos.",
         display_order: 2,
+        category: "cultura",
         created_at: "",
     },
     {
@@ -34,6 +36,7 @@ const fallbackRaices = [
         description:
             "Herbolaria y conocimientos medicinales transmitidos de generación en generación para el bienestar comunitario.",
         display_order: 3,
+        category: "talleres",
         created_at: "",
     },
 ];
@@ -47,6 +50,7 @@ const fallbackPreservacion = [
         description:
             "Documentamos y protegemos la extraordinaria diversidad de hongos del bosque de niebla.",
         display_order: 1,
+        category: "ecoturismo",
         created_at: "",
     },
     {
@@ -57,6 +61,7 @@ const fallbackPreservacion = [
         description:
             "Programas activos de reforestación con árboles nativos para restaurar los ecosistemas.",
         display_order: 2,
+        category: "activismo",
         created_at: "",
     },
     {
@@ -67,6 +72,7 @@ const fallbackPreservacion = [
         description:
             "Protegemos los manantiales, ríos y el embalse natural que abastecen a toda la región.",
         display_order: 3,
+        category: "ecoturismo",
         created_at: "",
     },
 ];
@@ -151,6 +157,7 @@ function HighlightSection({
                                 description={card.description}
                                 tag={tagLabel}
                                 tagColor={tagColor}
+                                category={card.category}
                             />
                         ))}
                 </div>

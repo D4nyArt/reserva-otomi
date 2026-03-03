@@ -442,6 +442,18 @@ export default function Eventos() {
         fetchEvents();
     }, []);
 
+    // Listen for filterEvents custom event (dispatched from SectionCard popup)
+    useEffect(() => {
+        const handler = ((e: CustomEvent<{ category: string }>) => {
+            if (e.detail?.category) {
+                setActiveFilter(e.detail.category);
+                setView("cards");
+            }
+        }) as EventListener;
+        window.addEventListener("filterEvents", handler);
+        return () => window.removeEventListener("filterEvents", handler);
+    }, []);
+
     const filteredEvents = activeFilter
         ? events.filter((e) => e.category === activeFilter)
         : events;

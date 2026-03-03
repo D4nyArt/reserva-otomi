@@ -203,6 +203,7 @@ function AddCardForm({
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
@@ -238,6 +239,7 @@ function AddCardForm({
                 title,
                 description,
                 image_url: imageUrl,
+                category: category || null,
             });
 
             if (!card) {
@@ -248,6 +250,7 @@ function AddCardForm({
 
             setTitle("");
             setDescription("");
+            setCategory("");
             setFile(null);
             setPreview(null);
             onCardAdded();
@@ -289,6 +292,20 @@ function AddCardForm({
                     className="w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-forest-400"
                     required
                 />
+            </div>
+
+            <div className="mb-4">
+                <label className="mb-1 block text-sm text-white/60">Categoría de evento <span className="text-white/30">(opcional)</span></label>
+                <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white outline-none focus:border-forest-400 [color-scheme:dark]"
+                >
+                    <option value="">Sin categoría</option>
+                    {CATEGORIES.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="mb-4">

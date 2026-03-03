@@ -34,6 +34,7 @@ CREATE TABLE highlight_cards (
   description TEXT NOT NULL,
   image_url TEXT NOT NULL,
   display_order INT DEFAULT 0,
+  category TEXT DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

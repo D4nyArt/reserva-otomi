@@ -41,6 +41,7 @@ export interface HighlightCard {
     description: string;
     image_url: string;
     display_order: number;
+    category: string | null;
     created_at: string;
 }
 
@@ -71,6 +72,7 @@ export async function addHighlightCard(card: {
     description: string;
     image_url: string;
     display_order?: number;
+    category?: string | null;
 }): Promise<HighlightCard | null> {
     if (!isConfigured) return null;
 

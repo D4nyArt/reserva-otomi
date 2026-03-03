@@ -15,6 +15,7 @@ import {
 } from "@/lib/supabase";
 import EscenariosPanel from "./components/EscenariosPanel";
 import UsagePanel from "./components/UsagePanel";
+import StoragePreviewBar from "./components/StoragePreviewBar";
 
 type Section = "raices" | "preservacion";
 type AdminTab = "tarjetas" | "eventos" | "escenarios" | "uso";
@@ -198,9 +199,11 @@ function ImageUpload({
 function AddCardForm({
     section,
     onCardAdded,
+    onPendingFileChange,
 }: {
     section: Section;
     onCardAdded: () => void;
+    onPendingFileChange?: (bytes: number) => void;
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -213,6 +216,7 @@ function AddCardForm({
     const handleFileSelect = (f: File) => {
         setFile(f);
         setPreview(URL.createObjectURL(f));
+        onPendingFileChange?.(f.size);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -254,6 +258,7 @@ function AddCardForm({
             setCategory("");
             setFile(null);
             setPreview(null);
+            onPendingFileChange?.(0);
             onCardAdded();
         } catch {
             setError("Error inesperado.");
@@ -383,6 +388,7 @@ function HighlightCardsPanel() {
     const [activeSection, setActiveSection] = useState<Section>("raices");
     const [cards, setCards] = useState<HighlightCard[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pendingFileSize, setPendingFileSize] = useState(0);
 
     const fetchCards = useCallback(async () => {
         setLoading(true);
@@ -409,6 +415,11 @@ function HighlightCardsPanel() {
 
     return (
         <div>
+            {/* Storage preview bar */}
+            <div className="mb-6">
+                <StoragePreviewBar pendingBytes={pendingFileSize} />
+            </div>
+
             {/* Sub-tabs */}
             <div className="mb-8 flex gap-3">
                 {(["raices", "preservacion"] as Section[]).map((section) => (
@@ -474,7 +485,11 @@ function HighlightCardsPanel() {
                 </div>
 
                 {/* Add Card Form */}
-                <AddCardForm section={activeSection} onCardAdded={fetchCards} />
+                <AddCardForm
+                    section={activeSection}
+                    onCardAdded={fetchCards}
+                    onPendingFileChange={setPendingFileSize}
+                />
             </div>
         </div>
     );

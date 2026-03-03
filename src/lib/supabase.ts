@@ -424,3 +424,88 @@ export async function uploadOtomiScenarioBgImage(
 
     return publicUrl;
 }
+
+/* ─── Supabase Usage Stats ─── */
+
+export interface BucketUsage {
+    name: string;
+    fileCount: number;
+    totalBytes: number;
+}
+
+export interface TableUsage {
+    name: string;
+    rowCount: number;
+}
+
+export interface SupabaseUsageStats {
+    storage: {
+        buckets: BucketUsage[];
+        totalBytes: number;
+        limitBytes: number; // 1 GB free tier
+    };
+    database: {
+        tables: TableUsage[];
+        totalRows: number;
+        limitBytes: number; // 500 MB free tier
+    };
+}
+
+async function getBucketUsage(bucketName: string): Promise<BucketUsage> {
+    try {
+        const { data, error } = await supabase.storage
+            .from(bucketName)
+            .list("", { limit: 1000 });
+
+        if (error || !data) return { name: bucketName, fileCount: 0, totalBytes: 0 };
+
+        const files = data.filter((item) => item.id);
+        const totalBytes = files.reduce(
+            (sum, file) => sum + (file.metadata?.size ?? 0),
+            0
+        );
+
+        return { name: bucketName, fileCount: files.length, totalBytes };
+    } catch {
+        return { name: bucketName, fileCount: 0, totalBytes: 0 };
+    }
+}
+
+async function getTableRowCount(tableName: string): Promise<TableUsage> {
+    try {
+        const { count, error } = await supabase
+            .from(tableName)
+            .select("*", { count: "exact", head: true });
+
+        if (error) return { name: tableName, rowCount: 0 };
+
+        return { name: tableName, rowCount: count ?? 0 };
+    } catch {
+        return { name: tableName, rowCount: 0 };
+    }
+}
+
+export async function getSupabaseUsageStats(): Promise<SupabaseUsageStats | null> {
+    if (!isConfigured) return null;
+
+    const STORAGE_BUCKETS = ["highlight-images", "otomi-element-images"];
+    const DB_TABLES = ["events", "highlight_cards", "otomi_scenarios", "otomi_elements"];
+
+    const [buckets, tables] = await Promise.all([
+        Promise.all(STORAGE_BUCKETS.map(getBucketUsage)),
+        Promise.all(DB_TABLES.map(getTableRowCount)),
+    ]);
+
+    return {
+        storage: {
+            buckets,
+            totalBytes: buckets.reduce((sum, b) => sum + b.totalBytes, 0),
+            limitBytes: 1 * 1024 * 1024 * 1024, // 1 GB
+        },
+        database: {
+            tables,
+            totalRows: tables.reduce((sum, t) => sum + t.rowCount, 0),
+            limitBytes: 500 * 1024 * 1024, // 500 MB
+        },
+    };
+}

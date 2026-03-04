@@ -23,6 +23,7 @@ export interface Event {
     category: string;
     image_url: string | null;
     tags: string[];
+    registration_link?: string | null; // optional URL where users can register
     created_at: string;
 }
 
@@ -106,6 +107,30 @@ export async function deleteHighlightCard(id: string): Promise<boolean> {
     return true;
 }
 
+// update an existing highlight card (title/description/category/image_url/display_order)
+export async function updateHighlightCard(
+    id: string,
+    updates: Partial<
+        Omit<HighlightCard, "id" | "created_at" | "section">
+    >
+): Promise<HighlightCard | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("highlight_cards")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error updating highlight card:", error);
+        return null;
+    }
+
+    return data;
+}
+
 export async function uploadHighlightImage(
     file: File
 ): Promise<string | null> {
@@ -161,6 +186,7 @@ export async function addEvent(event: {
     category: string;
     tags: string[];
     image_url?: string | null;
+    registration_link?: string | null; //La agrego para el link de registro
 }): Promise<Event | null> {
     if (!isConfigured) return null;
 
@@ -192,6 +218,28 @@ export async function deleteEvent(id: string): Promise<boolean> {
     }
 
     return true;
+}
+
+// allow updating existing event fields
+export async function updateEvent(
+    id: string,
+    updates: Partial<Omit<Event, "id" | "created_at">>
+): Promise<Event | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("events")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error updating event:", error);
+        return null;
+    }
+
+    return data;
 }
 
 /* ─── Otomi Learning Tool Types ─── */

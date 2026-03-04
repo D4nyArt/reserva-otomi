@@ -18,10 +18,10 @@ function getCategoryStyle(category: string) {
 
 /* ─── Fallback mock events ─── */
 const fallbackEvents: Event[] = [
-    { id: "1", title: "Senderismo en la Reserva", description: "Recorrido guiado por los senderos de la reserva natural, con avistamiento de aves y flora endémica.", date: "2026-03-15T09:00:00-06:00", category: "ecoturismo", tags: ["senderismo", "avistamientos"], image_url: null, created_at: "" },
-    { id: "2", title: "Taller de Lengua Otomí", description: "Sesión introductoria a la lengua Hñähñu con hablantes nativos de la comunidad.", date: "2026-03-22T10:00:00-06:00", category: "cultura", tags: ["lengua", "comunidad"], image_url: null, created_at: "" },
-    { id: "3", title: "Jornada de Reforestación", description: "Actividad comunitaria de plantación de árboles nativos en la zona de amortiguamiento.", date: "2026-04-05T08:00:00-06:00", category: "activismo", tags: ["reforestación", "voluntariado"], image_url: null, created_at: "" },
-    { id: "4", title: "Taller de Medicina Tradicional", description: "Conoce las plantas medicinales de la región y sus usos ancestrales.", date: "2026-04-12T11:00:00-06:00", category: "talleres", tags: ["medicina", "herbolaria"], image_url: null, created_at: "" },
+    { id: "1", title: "Senderismo en la Reserva", description: "Recorrido guiado por los senderos de la reserva natural, con avistamiento de aves y flora endémica.", date: "2026-03-15T09:00:00-06:00", category: "ecoturismo", tags: ["senderismo", "avistamientos"], registration_link: "https://example.com/register-senderismo", image_url: null, created_at: "" },
+    { id: "2", title: "Taller de Lengua Otomí", description: "Sesión introductoria a la lengua Hñähñu con hablantes nativos de la comunidad.", date: "2026-03-22T10:00:00-06:00", category: "cultura", tags: ["lengua", "comunidad"], registration_link: null, image_url: null, created_at: "" },
+    { id: "3", title: "Jornada de Reforestación", description: "Actividad comunitaria de plantación de árboles nativos en la zona de amortiguamiento.", date: "2026-04-05T08:00:00-06:00", category: "activismo", tags: ["reforestación", "voluntariado"], registration_link: "https://example.com/register-reforestacion", image_url: null, created_at: "" },
+    { id: "4", title: "Taller de Medicina Tradicional", description: "Conoce las plantas medicinales de la región y sus usos ancestrales.", date: "2026-04-12T11:00:00-06:00", category: "talleres", tags: ["medicina", "herbolaria"], registration_link: null, image_url: null, created_at: "" },
 ];
 
 /* ─── Helpers ─── */
@@ -154,6 +154,17 @@ function EventModal({ event, onClose }: { event: Event; onClose: () => void }) {
                             ))}
                         </div>
                     )}
+
+                    {event.registration_link && event.registration_link.trim() && (
+                        <a
+                            href={event.registration_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-6 inline-block rounded-xl bg-forest-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-forest-400"
+                        >
+                            Registrarse
+                        </a>
+                    )}
                 </div>
             </div>
         </div>
@@ -187,6 +198,18 @@ function EventCard({ event, onSelect }: { event: Event; onSelect: (e: Event) => 
                             </span>
                         ))}
                     </div>
+                )}
+
+                {event.registration_link && event.registration_link.trim() && (
+                    <a
+                        href={event.registration_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-4 inline-block rounded-xl bg-forest-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-forest-400"
+                    >
+                        Registrarse
+                    </a>
                 )}
             </div>
             <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">

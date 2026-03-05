@@ -6,10 +6,12 @@ import {
     getHighlightCards,
     addHighlightCard,
     deleteHighlightCard,
+    updateHighlightCard,
     uploadHighlightImage,
     getEvents,
     addEvent,
     deleteEvent,
+    updateEvent,
     type HighlightCard,
     type Event,
 } from "@/lib/supabase";
@@ -203,11 +205,17 @@ function ImageUpload({
 function AddCardForm({
     section,
     onCardAdded,
+    onCardUpdated,
     onPendingFileChange,
+    initialCard,
+    onCancelEdit,
 }: {
     section: Section;
-    onCardAdded: () => void;
+    onCardAdded?: () => void;
+    onCardUpdated?: () => void;
     onPendingFileChange?: (bytes: number) => void;
+    initialCard?: HighlightCard;
+    onCancelEdit?: () => void;
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -217,6 +225,16 @@ function AddCardForm({
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
+    // populate when editing
+    useEffect(() => {
+        if (initialCard) {
+            setTitle(initialCard.title);
+            setDescription(initialCard.description);
+            setCategory(initialCard.category || "");
+            setPreview(initialCard.image_url);
+        }
+    }, [initialCard]);
+
     const handleFileSelect = (f: File) => {
         setFile(f);
         setPreview(URL.createObjectURL(f));
@@ -225,7 +243,7 @@ function AddCardForm({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!file) {
+        if (!initialCard && !file) {
             setError("Por favor selecciona una imagen.");
             return;
         }
@@ -234,36 +252,66 @@ function AddCardForm({
         setError("");
 
         try {
-            const imageUrl = await uploadHighlightImage(file);
-            if (!imageUrl) {
-                setError(
-                    "Error al subir la imagen. Verifica que el bucket 'highlight-images' existe en Supabase."
-                );
-                setSaving(false);
-                return;
+            let imageUrl: string | null = null;
+            if (file) {
+                imageUrl = await uploadHighlightImage(file);
+                if (!imageUrl) {
+                    setError(
+                        "Error al subir la imagen. Verifica que el bucket 'highlight-images' existe en Supabase."
+                    );
+                    setSaving(false);
+                    return;
+                }
+            } else if (initialCard) {
+                imageUrl = initialCard.image_url;
             }
 
-            const card = await addHighlightCard({
-                section,
-                title,
-                description,
-                image_url: imageUrl,
-                category: category || null,
-            });
+            if (initialCard) {
+                // update path
+                const updates: any = {
+                    title,
+                    description,
+                    category: category || null,
+                };
+                if (imageUrl) updates.image_url = imageUrl;
+                const updated = await updateHighlightCard(initialCard.id, updates);
+                if (!updated) {
+                    setError("Error al actualizar la tarjeta.");
+                    setSaving(false);
+                    return;
+                }
+                // Reset form
+                setTitle("");
+                setDescription("");
+                setCategory("");
+                setFile(null);
+                setPreview(null);
+                onPendingFileChange?.(0);
+                onCardUpdated?.();
+                onCancelEdit?.();
+            } else {
+                const card = await addHighlightCard({
+                    section,
+                    title,
+                    description,
+                    image_url: imageUrl!,
+                    category: category || null,
+                });
 
-            if (!card) {
-                setError("Error al crear la tarjeta.");
-                setSaving(false);
-                return;
+                if (!card) {
+                    setError("Error al crear la tarjeta.");
+                    setSaving(false);
+                    return;
+                }
+
+                setTitle("");
+                setDescription("");
+                setCategory("");
+                setFile(null);
+                setPreview(null);
+                onPendingFileChange?.(0);
+                onCardAdded?.();
             }
-
-            setTitle("");
-            setDescription("");
-            setCategory("");
-            setFile(null);
-            setPreview(null);
-            onPendingFileChange?.(0);
-            onCardAdded();
         } catch {
             setError("Error inesperado.");
         } finally {
@@ -277,7 +325,7 @@ function AddCardForm({
             className="rounded-2xl border border-white/10 bg-white/5 p-6"
         >
             <h3 className="font-heading mb-4 text-lg font-bold text-white">
-                Agregar Tarjeta
+                {initialCard ? "Editar Tarjeta" : "Agregar Tarjeta"}
             </h3>
 
             <div className="mb-4">
@@ -324,8 +372,17 @@ function AddCardForm({
             </div>
 
             {error && (
-                <p className="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">
-                    {error}
+                <p className="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400 flex items-center justify-between">
+                    <span>{error}</span>
+                    {initialCard && onCancelEdit && (
+                        <button
+                            type="button"
+                            className="ml-4 text-sm underline text-white/90 hover:text-white"
+                            onClick={onCancelEdit}
+                        >
+                            Cancelar
+                        </button>
+                    )}
                 </p>
             )}
 
@@ -334,8 +391,18 @@ function AddCardForm({
                 disabled={saving}
                 className="w-full rounded-xl bg-forest-500 py-3 text-sm font-semibold text-white transition-all hover:bg-forest-400 disabled:opacity-50"
             >
-                {saving ? "Guardando..." : "Agregar Tarjeta"}
+                {saving ? "Guardando..." : initialCard ? "Actualizar Tarjeta" : "Agregar Tarjeta"}
             </button>
+
+            {initialCard && onCancelEdit && (
+                <button
+                    type="button"
+                    className="mt-2 w-full rounded-xl border border-white/15 py-3 text-sm font-semibold text-white transition-all hover:bg-white/5"
+                    onClick={onCancelEdit}
+                >
+                    Cancelar
+                </button>
+            )}
         </form>
     );
 }
@@ -344,11 +411,14 @@ function AddCardForm({
 function CardListItem({
     card,
     onDelete,
+    onEdit,
 }: {
     card: HighlightCard;
     onDelete: (id: string) => void;
+    onEdit?: (card: HighlightCard) => void;
 }) {
     const [deleting, setDeleting] = useState(false);
+    const [editing, setEditing] = useState(false);
 
     const handleDelete = async () => {
         if (
@@ -382,6 +452,16 @@ function CardListItem({
                 </h4>
                 <p className="truncate text-xs text-white/40">{card.description}</p>
             </div>
+            {onEdit && (
+                <EditButton
+                    editing={editing}
+                    onClick={() => {
+                        setEditing(true);
+                        onEdit(card);
+                        setEditing(false);
+                    }}
+                />
+            )}
             <DeleteButton deleting={deleting} onClick={handleDelete} />
         </div>
     );
@@ -393,6 +473,7 @@ function HighlightCardsPanel() {
     const [cards, setCards] = useState<HighlightCard[]>([]);
     const [loading, setLoading] = useState(true);
     const [pendingFileSize, setPendingFileSize] = useState(0);
+    const [editingCard, setEditingCard] = useState<HighlightCard | null>(null);
 
     const fetchCards = useCallback(async () => {
         setLoading(true);
@@ -407,6 +488,19 @@ function HighlightCardsPanel() {
 
     const handleDelete = (id: string) => {
         setCards((prev) => prev.filter((c) => c.id !== id));
+    };
+
+    const handleEdit = (card: HighlightCard) => {
+        setEditingCard(card);
+    };
+
+    const handleSaved = () => {
+        fetchCards();
+        setEditingCard(null);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingCard(null);
     };
 
     const sectionConfig = {
@@ -482,6 +576,7 @@ function HighlightCardsPanel() {
                                     key={card.id}
                                     card={card}
                                     onDelete={handleDelete}
+                                    onEdit={handleEdit}
                                 />
                             ))}
                         </div>
@@ -491,7 +586,10 @@ function HighlightCardsPanel() {
                 {/* Add Card Form */}
                 <AddCardForm
                     section={activeSection}
-                    onCardAdded={fetchCards}
+                    initialCard={editingCard || undefined}
+                    onCardAdded={editingCard ? undefined : fetchCards}
+                    onCardUpdated={editingCard ? handleSaved : undefined}
+                    onCancelEdit={handleCancelEdit}
                     onPendingFileChange={setPendingFileSize}
                 />
             </div>
@@ -502,6 +600,61 @@ function HighlightCardsPanel() {
 /* ═══════════════════════════════════════════ */
 /* ═══  EVENTS MANAGEMENT  ════════════════ */
 /* ═══════════════════════════════════════════ */
+
+/* ─── Edit Button (shared) ─── */
+function EditButton({
+    editing,
+    onClick,
+}: {
+    editing: boolean;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            onClick={onClick}
+            disabled={editing}
+            className="shrink-0 rounded-lg border border-blue-500/20 bg-blue-500/10 p-2 text-blue-400 transition-all hover:border-blue-500/40 hover:bg-blue-500/20 disabled:opacity-50"
+            title="Editar"
+        >
+            {editing ? (
+                <svg
+                    className="h-4 w-4 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                >
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        className="opacity-25"
+                    />
+                    <path
+                        d="M4 12a8 8 0 018-8"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                    />
+                </svg>
+            ) : (
+                <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.862 3.487l3.651 3.651m-12.12 2.122l6.363-6.364a1.5 1.5 0 012.121 0l3.535 3.535a1.5 1.5 0 010 2.121l-6.364 6.364a1.5 1.5 0 01-1.06.44H7.5v-3.535a1.5 1.5 0 01.44-1.06z"
+                    />
+                </svg>
+            )}
+        </button>
+    );
+}
 
 /* ─── Delete Button (shared) ─── */
 function DeleteButton({
@@ -657,11 +810,14 @@ function CalendarMini({ events }: { events: Event[] }) {
 function EventListItem({
     event,
     onDelete,
+    onEdit,
 }: {
     event: Event;
     onDelete: (id: string) => void;
+    onEdit?: (event: Event) => void;
 }) {
     const [deleting, setDeleting] = useState(false);
+    const [editing, setEditing] = useState(false);
     const style = getCategoryStyle(event.category);
     const date = new Date(event.date);
     const dateStr = date.toLocaleDateString("es-MX", {
@@ -713,24 +869,69 @@ function EventListItem({
                     {dateStr}
                     {event.tags?.length > 0 && ` · ${event.tags.join(", ")}`}
                 </p>
-            </div>
+                {event.registration_link && (
+                    <p className="truncate text-xs text-white/40">
+                        Registro: <a
+                            href={event.registration_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-white"
+                        >
+                            enlace
+                        </a>
+                    </p>
+                )}
+            </div> {/* end info */}
 
+            {onEdit && (
+                <EditButton
+                    editing={editing}
+                    onClick={() => {
+                        setEditing(true);
+                        onEdit(event);
+                        setEditing(false);
+                    }}
+                />
+            )}
             <DeleteButton deleting={deleting} onClick={handleDelete} />
         </div>
     );
 }
 
 /* ─── Add Event Form ─── */
-function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
+function AddEventForm({
+    onEventAdded,
+    onEventUpdated,
+    initialEvent,
+    onCancelEdit,
+}: {
+    onEventAdded?: () => void;
+    onEventUpdated?: () => void;
+    initialEvent?: Event;
+    onCancelEdit?: () => void;
+}) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [category, setCategory] = useState("ecoturismo");
     const [tagsInput, setTagsInput] = useState("");
+    const [registrationLink, setRegistrationLink] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (initialEvent) {
+            setTitle(initialEvent.title);
+            setDescription(initialEvent.description);
+            setDate(initialEvent.date.substring(0, 10));
+            setCategory(initialEvent.category);
+            setTagsInput(initialEvent.tags.join(", "));
+            setRegistrationLink(initialEvent.registration_link || "");
+            setPreview(initialEvent.image_url);
+        }
+    }, [initialEvent]);
 
     const handleFileSelect = (f: File) => {
         setFile(f);
@@ -752,6 +953,20 @@ function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
                     setSaving(false);
                     return;
                 }
+            } else if (initialEvent) {
+                // Use existing image if not uploading a new one
+                imageUrl = initialEvent.image_url;
+            }
+
+            //valida la url de registro, si se proporcionó
+            if (registrationLink.trim()) {
+                try {
+                    new URL(registrationLink);
+                } catch {
+                    setError("La URL de registro no es válida.");
+                    setSaving(false);
+                    return;
+                }
             }
 
             const tags = tagsInput
@@ -759,30 +974,52 @@ function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
                 .map((t) => t.trim())
                 .filter((t) => t.length > 0);
 
-            const result = await addEvent({
+            const payload: any = {
                 title,
                 description,
                 date: new Date(date).toISOString(),
                 category,
                 tags,
-                image_url: imageUrl,
-            });
+            };
+
+            if (imageUrl) {
+                payload.image_url = imageUrl;
+            }
+
+            if (registrationLink.trim()) {
+                payload.registration_link = registrationLink;
+            }
+
+            let result;
+            if (initialEvent) {
+                // Update existing event
+                result = await updateEvent(initialEvent.id, payload);
+            } else {
+                // Create new event
+                result = await addEvent(payload);
+            }
 
             if (!result) {
-                setError("Error al crear el evento.");
+                setError(initialEvent ? "Error al actualizar el evento." : "Error al crear el evento.");
                 setSaving(false);
                 return;
             }
 
-            // Reset
+            // Reset and notify
             setTitle("");
             setDescription("");
             setDate("");
             setCategory("ecoturismo");
             setTagsInput("");
+            setRegistrationLink("");
             setFile(null);
             setPreview(null);
-            onEventAdded();
+            if (initialEvent) {
+                onEventUpdated?.();
+                onCancelEdit?.();
+            } else {
+                onEventAdded?.();
+            }
         } catch {
             setError("Error inesperado.");
         } finally {
@@ -796,7 +1033,7 @@ function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
             className="rounded-2xl border border-white/10 bg-white/5 p-6"
         >
             <h3 className="font-heading mb-4 text-lg font-bold text-white">
-                Agregar Evento
+                {initialEvent ? "Editar Evento" : "Agregar Evento"}
             </h3>
 
             {/* Title */}
@@ -897,8 +1134,17 @@ function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
             </div>
 
             {error && (
-                <p className="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">
-                    {error}
+                <p className="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400 flex items-center justify-between">
+                    <span>{error}</span>
+                    {initialEvent && onCancelEdit && (
+                        <button
+                            type="button"
+                            className="ml-4 text-sm underline text-white/90 hover:text-white"
+                            onClick={onCancelEdit}
+                        >
+                            Cancelar
+                        </button>
+                    )}
                 </p>
             )}
 
@@ -907,8 +1153,18 @@ function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
                 disabled={saving}
                 className="w-full rounded-xl bg-forest-500 py-3 text-sm font-semibold text-white transition-all hover:bg-forest-400 disabled:opacity-50"
             >
-                {saving ? "Guardando..." : "Agregar Evento"}
+                {saving ? "Guardando..." : initialEvent ? "Actualizar Evento" : "Agregar Evento"}
             </button>
+
+            {initialEvent && onCancelEdit && (
+                <button
+                    type="button"
+                    className="mt-2 w-full rounded-xl border border-white/15 py-3 text-sm font-semibold text-white transition-all hover:bg-white/5"
+                    onClick={onCancelEdit}
+                >
+                    Cancelar
+                </button>
+            )}
         </form>
     );
 }
@@ -917,6 +1173,7 @@ function AddEventForm({ onEventAdded }: { onEventAdded: () => void }) {
 function EventsPanel() {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
+    const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
     const fetchEvents = useCallback(async () => {
         setLoading(true);
@@ -931,6 +1188,19 @@ function EventsPanel() {
 
     const handleDelete = (id: string) => {
         setEvents((prev) => prev.filter((e) => e.id !== id));
+    };
+
+    const handleEdit = (event: Event) => {
+        setEditingEvent(event);
+    };
+
+    const handleSaved = () => {
+        fetchEvents();
+        setEditingEvent(null);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingEvent(null);
     };
 
     return (
@@ -977,6 +1247,7 @@ function EventsPanel() {
                                     key={event.id}
                                     event={event}
                                     onDelete={handleDelete}
+                                    onEdit={handleEdit}
                                 />
                             ))}
                         </div>
@@ -986,7 +1257,12 @@ function EventsPanel() {
                 {/* Right column: Calendar + Add form */}
                 <div className="space-y-6">
                     <CalendarMini events={events} />
-                    <AddEventForm onEventAdded={fetchEvents} />
+                    <AddEventForm
+                        initialEvent={editingEvent || undefined}
+                        onEventAdded={editingEvent ? undefined : fetchEvents}
+                        onEventUpdated={editingEvent ? handleSaved : undefined}
+                        onCancelEdit={handleCancelEdit}
+                    />
                 </div>
             </div>
         </div>

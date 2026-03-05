@@ -13,6 +13,10 @@ CREATE TABLE events (
   date TIMESTAMPTZ NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('ecoturismo', 'cultura', 'talleres', 'activismo')),
   image_url TEXT,
+  registration_link TEXT, -- opcional URL para el registro
+  CONSTRAINT registration_link_valid CHECK (
+      registration_link IS NULL OR registration_link = '' OR registration_link ~* '^(https?://).+'
+  ),
   tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -93,11 +97,11 @@ CREATE POLICY "Allow update on events"
 -- in your Supabase Dashboard → Storage → New Bucket
 
 -- ─── Sample Data: Events ───
-INSERT INTO events (title, description, date, category, image_url, tags) VALUES
-  ('Senderismo en la Reserva', 'Recorrido guiado por los senderos de la reserva natural, con avistamiento de aves y flora endémica.', '2026-03-15T09:00:00-06:00', 'ecoturismo', NULL, ARRAY['senderismo', 'avistamientos', 'naturaleza']),
-  ('Taller de Lengua Otomí', 'Sesión introductoria a la lengua Hñähñu con hablantes nativos de la comunidad.', '2026-03-22T10:00:00-06:00', 'cultura', NULL, ARRAY['lengua', 'otomí', 'comunidad']),
-  ('Jornada de Reforestación', 'Actividad comunitaria de plantación de árboles nativos en la zona de amortiguamiento.', '2026-04-05T08:00:00-06:00', 'activismo', NULL, ARRAY['reforestación', 'medio ambiente', 'voluntariado']),
-  ('Taller de Medicina Tradicional', 'Conoce las plantas medicinales de la región y sus usos ancestrales.', '2026-04-12T11:00:00-06:00', 'talleres', NULL, ARRAY['medicina', 'herbolaria', 'tradición']);
+INSERT INTO events (title, description, date, category, image_url, registration_link, tags) VALUES
+  ('Senderismo en la Reserva', 'Recorrido guiado por los senderos de la reserva natural, con avistamiento de aves y flora endémica.', '2026-03-15T09:00:00-06:00', 'ecoturismo', NULL, 'https://example.com/register-senderismo', ARRAY['senderismo', 'avistamientos', 'naturaleza']),
+  ('Taller de Lengua Otomí', 'Sesión introductoria a la lengua Hñähñu con hablantes nativos de la comunidad.', '2026-03-22T10:00:00-06:00', 'cultura', NULL, NULL, ARRAY['lengua', 'otomí', 'comunidad']),
+  ('Jornada de Reforestación', 'Actividad comunitaria de plantación de árboles nativos en la zona de amortiguamiento.', '2026-04-05T08:00:00-06:00', 'activismo', NULL, 'https://example.com/register-reforestacion', ARRAY['reforestación', 'medio ambiente', 'voluntariado']),
+  ('Taller de Medicina Tradicional', 'Conoce las plantas medicinales de la región y sus usos ancestrales.', '2026-04-12T11:00:00-06:00', 'talleres', NULL, NULL, ARRAY['medicina', 'herbolaria', 'tradición']);
 
 INSERT INTO testimonials (author, content, event_id) VALUES
   ('María González', 'Una experiencia increíble. Aprendí tanto sobre la flora y fauna de nuestra reserva. ¡Volveré pronto!', (SELECT id FROM events WHERE title = 'Senderismo en la Reserva')),

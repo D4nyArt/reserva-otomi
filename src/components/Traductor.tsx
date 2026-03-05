@@ -9,7 +9,7 @@ type Entry = {
     ot: string[];
 };
 
-const DICT_URL = "/es-oto.txt";
+const DICT_URL = "/api/public/dictionary";
 const MAX_SUGGESTIONS = 8;
 
 function stripAccents(s: string) {
@@ -369,7 +369,7 @@ export default function Traductor() {
 
                     {error && (
                         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                            {error} (revisa que exista <code className="font-mono">public/es-oto.txt</code>)
+                            {error} (revisa que exista <code className="font-mono">data/es-oto.txt</code>)
                         </div>
                     )}
 

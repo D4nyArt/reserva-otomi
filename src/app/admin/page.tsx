@@ -18,9 +18,11 @@ import {
 import EscenariosPanel from "./components/EscenariosPanel";
 import UsagePanel from "./components/UsagePanel";
 import StoragePreviewBar from "./components/StoragePreviewBar";
+import DictionaryManagerPanel from "./components/DictionaryManagerPanel";
+
 
 type Section = "raices" | "preservacion";
-type AdminTab = "tarjetas" | "eventos" | "escenarios" | "uso";
+type AdminTab = "tarjetas" | "eventos" | "escenarios" | "uso" | "diccionario";
 
 const CATEGORIES = [
     { value: "ecoturismo", label: "Ecoturismo", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700" },
@@ -53,6 +55,8 @@ function LoginGate({ onAuthenticated }: { onAuthenticated: () => void }) {
 
             if (res.ok) {
                 sessionStorage.setItem("admin_auth", "true");
+                sessionStorage.setItem("admin_pw", password);
+
                 onAuthenticated();
             } else {
                 const data = await res.json();
@@ -1305,6 +1309,14 @@ function AdminDashboard() {
                 </svg>
             ),
         },
+        diccionario: {
+          label: "Diccionario",
+          icon: (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75h8.25M12 12h8.25M12 17.25h8.25M3.75 6.75h3.5v14.5h-3.5V6.75zm0 0V3.75h3.5v3" />
+                </svg>
+            ),
+        },
     };
 
     return (
@@ -1352,6 +1364,7 @@ function AdminDashboard() {
                 {activeTab === "eventos" && <EventsPanel />}
                 {activeTab === "escenarios" && <EscenariosPanel />}
                 {activeTab === "uso" && <UsagePanel />}
+                {activeTab === "diccionario" && <DictionaryManagerPanel />}
             </div>
         </div>
     );

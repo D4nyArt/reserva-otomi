@@ -35,7 +35,8 @@ CREATE TABLE highlight_cards (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   section TEXT NOT NULL CHECK (section IN ('raices', 'preservacion')),
   title TEXT NOT NULL,
-  description TEXT NOT NULL,
+  short_description TEXT NOT NULL,
+  long_description TEXT NOT NULL DEFAULT '',
   image_url TEXT NOT NULL,
   display_order INT DEFAULT 0,
   category TEXT DEFAULT NULL,
@@ -109,7 +110,7 @@ INSERT INTO testimonials (author, content, event_id) VALUES
   ('Ana Martínez', 'Plantar árboles con la comunidad fue una experiencia transformadora. La organización es excelente.', (SELECT id FROM events WHERE title = 'Jornada de Reforestación'));
 
 -- ─── Sample Data: Highlight Cards ───
-INSERT INTO highlight_cards (section, title, description, image_url, display_order) VALUES
+INSERT INTO highlight_cards (section, title, short_description, image_url, display_order) VALUES
   ('raices', 'Lengua Hñähñu', 'Preservamos la lengua Otomí a través de talleres, materiales educativos y programas intergeneracionales.', '/images/lengua.png', 1),
   ('raices', 'Gastronomía Ancestral', 'La cocina Otomí refleja siglos de sabiduría: ingredientes locales, técnicas prehispánicas y sabores únicos.', '/images/gastronomia.png', 2),
   ('raices', 'Medicina Tradicional', 'Herbolaria y conocimientos medicinales transmitidos de generación en generación para el bienestar comunitario.', '/images/medicina.png', 3),

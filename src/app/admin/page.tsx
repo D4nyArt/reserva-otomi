@@ -218,7 +218,8 @@ function AddCardForm({
     onCancelEdit?: () => void;
 }) {
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [shortDescription, setShortDescription] = useState("");
+    const [longDescription, setLongDescription] = useState("");
     const [category, setCategory] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
@@ -229,7 +230,8 @@ function AddCardForm({
     useEffect(() => {
         if (initialCard) {
             setTitle(initialCard.title);
-            setDescription(initialCard.description);
+            setShortDescription(initialCard.short_description);
+            setLongDescription(initialCard.long_description);
             setCategory(initialCard.category || "");
             setPreview(initialCard.image_url);
         }
@@ -270,7 +272,8 @@ function AddCardForm({
                 // update path
                 const updates: any = {
                     title,
-                    description,
+                    short_description: shortDescription,
+                    long_description: longDescription,
                     category: category || null,
                 };
                 if (imageUrl) updates.image_url = imageUrl;
@@ -282,7 +285,8 @@ function AddCardForm({
                 }
                 // Reset form
                 setTitle("");
-                setDescription("");
+                setShortDescription("");
+                setLongDescription("");
                 setCategory("");
                 setFile(null);
                 setPreview(null);
@@ -293,7 +297,8 @@ function AddCardForm({
                 const card = await addHighlightCard({
                     section,
                     title,
-                    description,
+                    short_description: shortDescription,
+                    long_description: longDescription,
                     image_url: imageUrl!,
                     category: category || null,
                 });
@@ -305,7 +310,8 @@ function AddCardForm({
                 }
 
                 setTitle("");
-                setDescription("");
+                setShortDescription("");
+                setLongDescription("");
                 setCategory("");
                 setFile(null);
                 setPreview(null);
@@ -341,11 +347,25 @@ function AddCardForm({
             </div>
 
             <div className="mb-4">
-                <label className="mb-1 block text-sm text-white/60">Descripción</label>
+                <label className="mb-1 block text-sm text-white/60">Descripción corta <span className="text-white/30">(visible en la tarjeta)</span></label>
+                <input
+                    type="text"
+                    value={shortDescription}
+                    onChange={(e) => setShortDescription(e.target.value)}
+                    placeholder="Breve resumen de la tarjeta"
+                    maxLength={120}
+                    className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-forest-400"
+                    required
+                />
+                <p className="mt-1 text-right text-[10px] text-white/20">{shortDescription.length}/120</p>
+            </div>
+
+            <div className="mb-4">
+                <label className="mb-1 block text-sm text-white/60">Descripción larga <span className="text-white/30">(visible al abrir la tarjeta)</span></label>
                 <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Descripción de la tarjeta"
+                    value={longDescription}
+                    onChange={(e) => setLongDescription(e.target.value)}
+                    placeholder="Descripción completa que aparece en el popup"
                     rows={3}
                     className="w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-forest-400"
                     required
@@ -451,7 +471,7 @@ function CardListItem({
                 <h4 className="truncate text-sm font-semibold text-white">
                     {card.title}
                 </h4>
-                <p className="truncate text-xs text-white/40">{card.description}</p>
+                <p className="truncate text-xs text-white/40">{card.short_description}</p>
             </div>
             {onEdit && (
                 <EditButton
@@ -1084,12 +1104,12 @@ function AddEventForm({
                     <select
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white outline-none focus:border-forest-400 [color-scheme:dark]"
+                        className="w-full rounded-lg border border-white/15 px-4 py-2.5 text-sm text-white outline-none focus:border-forest-400 [color-scheme:dark]"
+                        style={{ backgroundColor: "#1a2116", fontFamily: "inherit" }}
                     >
+                        <option value="" style={{ backgroundColor: "#1a2116" }}>Sin categoría</option>
                         {CATEGORIES.map((c) => (
-                            <option key={c.value} value={c.value}>
-                                {c.label}
-                            </option>
+                            <option key={c.value} value={c.value} style={{ backgroundColor: "#1a2116" }}>{c.label}</option>
                         ))}
                     </select>
                 </div>

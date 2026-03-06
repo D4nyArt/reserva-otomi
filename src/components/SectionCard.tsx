@@ -13,7 +13,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 interface SectionCardProps {
     image: string;
     title: string;
-    description: string;
+    shortDescription: string;
+    longDescription: string;
     tag?: string;
     tagColor?: string;
     category?: string | null;
@@ -23,7 +24,7 @@ interface SectionCardProps {
 function CardModal({
     image,
     title,
-    description,
+    longDescription,
     tag,
     tagColor,
     category,
@@ -111,7 +112,7 @@ function CardModal({
                         {title}
                     </h3>
                     <p className="text-sm leading-relaxed text-charcoal/70">
-                        {description}
+                        {longDescription}
                     </p>
 
                     {/* View Events button */}
@@ -136,7 +137,8 @@ function CardModal({
 export default function SectionCard({
     image,
     title,
-    description,
+    shortDescription,
+    longDescription,
     tag,
     tagColor = "bg-forest-500",
     category,
@@ -178,7 +180,7 @@ export default function SectionCard({
                         {title}
                     </h3>
                     <p className="line-clamp-3 text-sm leading-relaxed text-charcoal/70">
-                        {description}
+                        {shortDescription}
                     </p>
                 </div>
 
@@ -191,7 +193,8 @@ export default function SectionCard({
                 <CardModal
                     image={image}
                     title={title}
-                    description={description}
+                    shortDescription={shortDescription}
+                    longDescription={longDescription}
                     tag={tag}
                     tagColor={tagColor}
                     category={category}

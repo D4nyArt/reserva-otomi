@@ -39,7 +39,8 @@ export interface HighlightCard {
     id: string;
     section: "raices" | "preservacion";
     title: string;
-    description: string;
+    short_description: string;
+    long_description: string;
     image_url: string;
     display_order: number;
     category: string | null;
@@ -70,7 +71,8 @@ export async function getHighlightCards(
 export async function addHighlightCard(card: {
     section: "raices" | "preservacion";
     title: string;
-    description: string;
+    short_description: string;
+    long_description: string;
     image_url: string;
     display_order?: number;
     category?: string | null;

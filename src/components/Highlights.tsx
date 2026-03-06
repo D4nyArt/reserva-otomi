@@ -11,8 +11,10 @@ const fallbackRaices = [
         section: "raices" as const,
         image_url: "/images/lengua.png",
         title: "Lengua Hñähñu",
-        description:
-            "Preservamos la lengua Otomí a través de talleres, materiales educativos y programas intergeneracionales.",
+        short_description:
+            "Preservamos la lengua Otomí a través de talleres y programas intergeneracionales.",
+        long_description:
+            "Preservamos la lengua Otomí a través de talleres, materiales educativos y programas intergeneracionales que conectan a las nuevas generaciones con sus raíces lingüísticas.",
         display_order: 1,
         category: "cultura",
         created_at: "",
@@ -22,8 +24,10 @@ const fallbackRaices = [
         section: "raices" as const,
         image_url: "/images/gastronomia.png",
         title: "Gastronomía Ancestral",
-        description:
-            "La cocina Otomí refleja siglos de sabiduría: ingredientes locales, técnicas prehispánicas y sabores únicos.",
+        short_description:
+            "Ingredientes locales, técnicas prehispánicas y sabores únicos de la cocina Otomí.",
+        long_description:
+            "La cocina Otomí refleja siglos de sabiduría: ingredientes locales, técnicas prehispánicas y sabores únicos que son parte fundamental de nuestra identidad cultural.",
         display_order: 2,
         category: "cultura",
         created_at: "",
@@ -33,8 +37,10 @@ const fallbackRaices = [
         section: "raices" as const,
         image_url: "/images/medicina.png",
         title: "Medicina Tradicional",
-        description:
-            "Herbolaria y conocimientos medicinales transmitidos de generación en generación para el bienestar comunitario.",
+        short_description:
+            "Herbolaria y conocimientos medicinales transmitidos de generación en generación.",
+        long_description:
+            "Herbolaria y conocimientos medicinales transmitidos de generación en generación para el bienestar comunitario, preservando el saber ancestral de nuestros pueblos.",
         display_order: 3,
         category: "talleres",
         created_at: "",
@@ -47,8 +53,10 @@ const fallbackPreservacion = [
         section: "preservacion" as const,
         image_url: "/images/hongos.png",
         title: "Biodiversidad: Hongos",
-        description:
-            "Documentamos y protegemos la extraordinaria diversidad de hongos del bosque de niebla.",
+        short_description:
+            "Documentamos la extraordinaria diversidad de hongos del bosque de niebla.",
+        long_description:
+            "Documentamos y protegemos la extraordinaria diversidad de hongos del bosque de niebla, un ecosistema único que alberga especies endémicas de gran valor ecológico.",
         display_order: 1,
         category: "ecoturismo",
         created_at: "",
@@ -58,8 +66,10 @@ const fallbackPreservacion = [
         section: "preservacion" as const,
         image_url: "/images/reforestacion.png",
         title: "Reforestación",
-        description:
-            "Programas activos de reforestación con árboles nativos para restaurar los ecosistemas.",
+        short_description:
+            "Programas de reforestación con árboles nativos para restaurar ecosistemas.",
+        long_description:
+            "Programas activos de reforestación con árboles nativos para restaurar los ecosistemas degradados y garantizar la biodiversidad de la región.",
         display_order: 2,
         category: "activismo",
         created_at: "",
@@ -69,8 +79,10 @@ const fallbackPreservacion = [
         section: "preservacion" as const,
         image_url: "/images/agua.png",
         title: "Conservación del Agua",
-        description:
-            "Protegemos los manantiales, ríos y el embalse natural que abastecen a toda la región.",
+        short_description:
+            "Protegemos los manantiales y ríos que abastecen a toda la región.",
+        long_description:
+            "Protegemos los manantiales, ríos y el embalse natural que abastecen a toda la región, asegurando el acceso al agua para las generaciones futuras.",
         display_order: 3,
         category: "ecoturismo",
         created_at: "",
@@ -154,7 +166,8 @@ function HighlightSection({
                                 key={card.id}
                                 image={card.image_url}
                                 title={card.title}
-                                description={card.description}
+                                shortDescription={card.short_description}
+                                longDescription={card.long_description}
                                 tag={tagLabel}
                                 tagColor={tagColor}
                                 category={card.category}

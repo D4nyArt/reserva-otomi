@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const navLinks = [
-    { label: "Quiénes Somos", href: "#quienes-somos" },
-    { label: "Raíces", href: "#raices" },
-    { label: "Preservación", href: "#preservacion" },
-    { label: "Eventos", href: "#eventos" },
+    { label: "Quiénes Somos", href: "/#quienes-somos" },
+    { label: "Raíces", href: "/#raices" },
+    { label: "Preservación", href: "/#preservacion" },
+    { label: "Eventos", href: "/#eventos" },
 ];
 
 export default function Navbar() {
@@ -48,7 +48,15 @@ export default function Navbar() {
                         </a>
                     ))}
 
-                    {/* 🔥 Nuevo Link Traductor */}
+                    {/* Aprender Otomí */}
+                    <Link
+                        href="/aprender-otomi"
+                        className="relative text-sm font-medium text-white/80 transition-colors hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-forest-400 after:transition-all hover:after:w-full"
+                    >
+                        Aprender Otomí
+                    </Link>
+
+                    {/* Traductor */}
                     <Link
                         href="/traductor"
                         className="relative text-sm font-medium text-white/80 transition-colors hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-forest-400 after:transition-all hover:after:w-full"
@@ -58,7 +66,7 @@ export default function Navbar() {
 
                     {/* Botón Contacto */}
                     <a
-                        href="#contacto"
+                        href="/#contacto"
                         className="rounded-full bg-forest-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-forest-400 hover:shadow-forest-500/30 hover:shadow-xl active:scale-95"
                     >
                         Contacto
@@ -106,7 +114,16 @@ export default function Navbar() {
                         </a>
                     ))}
 
-                    {/* 🔥 Traductor en Mobile */}
+                    {/* Aprender Otomí en Mobile */}
+                    <Link
+                        href="/aprender-otomi"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="font-heading text-3xl font-light text-white/90 transition-colors hover:text-forest-400"
+                    >
+                        Aprender Otomí
+                    </Link>
+
+                    {/* Traductor en Mobile */}
                     <Link
                         href="/traductor"
                         onClick={() => setIsMobileOpen(false)}
@@ -117,7 +134,7 @@ export default function Navbar() {
 
                     {/* Contacto */}
                     <a
-                        href="#contacto"
+                        href="/#contacto"
                         onClick={() => setIsMobileOpen(false)}
                         className="mt-4 rounded-full bg-forest-500 px-10 py-3.5 text-lg font-semibold text-white shadow-xl transition-all hover:bg-forest-400"
                     >

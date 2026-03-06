@@ -284,150 +284,161 @@ export default function Traductor() {
             : "Ej. dehe, pünts’a noya...";
 
     return (
-        <section className="mx-auto max-w-4xl px-6 py-12">
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-forest-950">Traductor Español ↔ Otomí</h1>
-                <p className="mt-2 text-sm text-charcoal/70">
-                    Busca una palabra y obtén su contraparte. Incluye autocompletado y copiar traducción.
+        <section className="min-h-screen bg-forest-950 pb-24 pt-32">
+            {/* Hero header */}
+            <div className="mx-auto mb-12 max-w-4xl px-6 text-center">
+                <span className="mb-3 inline-block text-sm font-semibold tracking-widest text-forest-400 uppercase">
+                    Diccionario Hñähñu
+                </span>
+                <h1 className="font-heading mb-4 text-4xl font-bold text-white md:text-5xl">
+                    Traductor{" "}
+                    <span className="bg-gradient-to-r from-forest-400 to-water-400 bg-clip-text text-transparent">
+                        Español ↔ Otomí
+                    </span>
+                </h1>
+                <p className="mx-auto max-w-xl text-white/60">
+                    Busca una palabra y obtén su contraparte. Incluye autocompletado y copia al portapapeles.
                 </p>
             </div>
 
-            <div className="rounded-2xl border border-forest-100 bg-white p-6 shadow-sm">
-                <div className="flex flex-col gap-4 md:flex-row md:items-end">
-                    <div className="relative flex-1">
-                        <label className="mb-2 block text-xs font-semibold tracking-widest text-forest-600 uppercase">
-                            {direction === "ES_TO_OT" ? "Español → Otomí" : "Otomí → Español"}
-                        </label>
+            <div className="mx-auto max-w-4xl px-6">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-end">
+                        <div className="relative flex-1">
+                            <label className="mb-2 block text-xs font-semibold tracking-widest text-forest-400 uppercase">
+                                {direction === "ES_TO_OT" ? "Español → Otomí" : "Otomí → Español"}
+                            </label>
 
-                        <input
-                            ref={inputRef}
-                            value={query}
-                            onChange={(e) => {
-                                setQuery(e.target.value);
-                                setCopyStatus(null);
-                                const next = e.target.value.trim();
-                                if (next) {
-                                    setIsOpen(true);
-                                } else {
-                                    setIsOpen(false);
-                                    setActiveIndex(-1);
-                                }
-                            }}
-                            onFocus={() => {
-                                if (query.trim() && suggestions.length > 0) setIsOpen(true);
-                            }}
-                            onKeyDown={onKeyDown}
-                            placeholder={placeholder}
-                            className="w-full rounded-xl border border-forest-100 px-4 py-3 text-sm outline-none focus:border-forest-300"
-                            autoComplete="off"
-                        />
+                            <input
+                                ref={inputRef}
+                                value={query}
+                                onChange={(e) => {
+                                    setQuery(e.target.value);
+                                    setCopyStatus(null);
+                                    const next = e.target.value.trim();
+                                    if (next) {
+                                        setIsOpen(true);
+                                    } else {
+                                        setIsOpen(false);
+                                        setActiveIndex(-1);
+                                    }
+                                }}
+                                onFocus={() => {
+                                    if (query.trim() && suggestions.length > 0) setIsOpen(true);
+                                }}
+                                onKeyDown={onKeyDown}
+                                placeholder={placeholder}
+                                className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-forest-400 [color-scheme:dark]"
+                                autoComplete="off"
+                            />
 
-                        {/* Dropdown */}
-                        {isOpen && suggestions.length > 0 && (
-                            <div
-                                ref={dropdownRef}
-                                className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-forest-100 bg-white shadow-lg"
-                                role="listbox"
-                            >
-                                {suggestions.map((s, idx) => {
-                                    const active = idx === activeIndex;
-                                    return (
-                                        <button
-                                            key={s}
-                                            type="button"
-                                            onMouseEnter={() => setActiveIndex(idx)}
-                                            onMouseDown={(e) => {
-                                                // evita que el input pierda focus antes de aplicar
-                                                e.preventDefault();
-                                                applySuggestion(s);
-                                            }}
-                                            className={[
-                                                "flex w-full items-center justify-between px-4 py-3 text-left text-sm",
-                                                active ? "bg-warm-gray" : "bg-white",
-                                            ].join(" ")}
-                                        >
-                                            <span className="text-forest-900">{s}</span>
-                                            <span className="text-xs text-charcoal/50">Enter</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-
-                    <button
-                        onClick={swapDirection}
-                        className="rounded-xl border border-forest-100 bg-warm-gray px-4 py-3 text-sm font-semibold text-forest-900 transition hover:opacity-90"
-                        type="button"
-                    >
-                        Cambiar dirección
-                    </button>
-                </div>
-
-                <div className="mt-6">
-                    {loading && <div className="text-sm text-charcoal/60">Cargando diccionario…</div>}
-
-                    {error && (
-                        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                            {error} (revisa que exista <code className="font-mono">data/es-oto.txt</code>)
-                        </div>
-                    )}
-
-                    {!loading && !error && (
-                        <>
-                            {query.trim() === "" ? (
-                                <div className="text-sm text-charcoal/60">Escribe una palabra para comenzar.</div>
-                            ) : results.length === 0 ? (
-                                <div className="text-sm text-charcoal/60">
-                                    No encontré coincidencias. Prueba con menos texto o sin acentos.
-                                </div>
-                            ) : (
-                                <div className="space-y-3">
-                                    {results.map((r, idx) => {
-                                        const translated = r.to.join(", ");
+                            {/* Dropdown */}
+                            {isOpen && suggestions.length > 0 && (
+                                <div
+                                    ref={dropdownRef}
+                                    className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-white/10 bg-forest-900 shadow-xl"
+                                    role="listbox"
+                                >
+                                    {suggestions.map((s, idx) => {
+                                        const active = idx === activeIndex;
                                         return (
-                                            <div key={`${r.from}-${idx}`} className="rounded-xl border border-forest-100 p-4">
-                                                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                                                    <div>
-                                                        <div className="text-xs font-semibold tracking-widest text-forest-600 uppercase">
-                                                            Resultado
-                                                        </div>
-
-                                                        <div className="mt-2 text-sm">
-                                                            <span className="font-semibold text-forest-900">Entrada:</span>{" "}
-                                                            <span className="text-charcoal/80">{r.from}</span>
-                                                        </div>
-
-                                                        <div className="mt-1 text-sm">
-                                                            <span className="font-semibold text-forest-900">Traducción:</span>{" "}
-                                                            <span className="text-charcoal/80">{translated}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleCopy(translated)}
-                                                            className="rounded-xl border border-forest-100 bg-white px-3 py-2 text-xs font-semibold text-forest-900 shadow-sm transition hover:bg-warm-gray"
-                                                        >
-                                                            Copiar traducción
-                                                        </button>
-
-                                                        {copyStatus === "ok" && (
-                                                            <span className="text-xs font-semibold text-forest-600">¡Copiado!</span>
-                                                        )}
-                                                        {copyStatus === "fail" && (
-                                                            <span className="text-xs font-semibold text-red-600">No se pudo copiar</span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <button
+                                                key={s}
+                                                type="button"
+                                                onMouseEnter={() => setActiveIndex(idx)}
+                                                onMouseDown={(e) => {
+                                                    // evita que el input pierda focus antes de aplicar
+                                                    e.preventDefault();
+                                                    applySuggestion(s);
+                                                }}
+                                                className={[
+                                                    "flex w-full items-center justify-between px-4 py-3 text-left text-sm",
+                                                    active ? "bg-white/10" : "bg-transparent",
+                                                ].join(" ")}
+                                            >
+                                                <span className="text-white">{s}</span>
+                                                <span className="text-xs text-white/30">Enter</span>
+                                            </button>
                                         );
                                     })}
                                 </div>
                             )}
-                        </>
-                    )}
+                        </div>
+
+                        <button
+                            onClick={swapDirection}
+                            className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                            type="button"
+                        >
+                            Cambiar dirección
+                        </button>
+                    </div>
+
+                    <div className="mt-6">
+                        {loading && <div className="text-sm text-white/40">Cargando diccionario…</div>}
+
+                        {error && (
+                            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+                                {error} (revisa que exista <code className="font-mono">data/es-oto.txt</code>)
+                            </div>
+                        )}
+
+                        {!loading && !error && (
+                            <>
+                                {query.trim() === "" ? (
+                                    <div className="text-sm text-white/40">Escribe una palabra para comenzar.</div>
+                                ) : results.length === 0 ? (
+                                    <div className="text-sm text-white/40">
+                                        No encontré coincidencias. Prueba con menos texto o sin acentos.
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {results.map((r, idx) => {
+                                            const translated = r.to.join(", ");
+                                            return (
+                                                <div key={`${r.from}-${idx}`} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                                                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                                                        <div>
+                                                            <div className="text-xs font-semibold tracking-widest text-forest-400 uppercase">
+                                                                Resultado
+                                                            </div>
+
+                                                            <div className="mt-2 text-sm">
+                                                                <span className="font-semibold text-white">Entrada:</span>{" "}
+                                                                <span className="text-white/70">{r.from}</span>
+                                                            </div>
+
+                                                            <div className="mt-1 text-sm">
+                                                                <span className="font-semibold text-white">Traducción:</span>{" "}
+                                                                <span className="text-forest-400 font-medium">{translated}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleCopy(translated)}
+                                                                className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
+                                                            >
+                                                                Copiar traducción
+                                                            </button>
+
+                                                            {copyStatus === "ok" && (
+                                                                <span className="text-xs font-semibold text-forest-400">¡Copiado!</span>
+                                                            )}
+                                                            {copyStatus === "fail" && (
+                                                                <span className="text-xs font-semibold text-red-400">No se pudo copiar</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </section>

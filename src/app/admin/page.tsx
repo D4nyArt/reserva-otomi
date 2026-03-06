@@ -357,11 +357,12 @@ function AddCardForm({
                 <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white outline-none focus:border-forest-400 [color-scheme:dark]"
+                    className="w-full rounded-lg border border-white/15 px-4 py-2.5 text-sm text-white outline-none focus:border-forest-400 [color-scheme:dark]"
+                    style={{ backgroundColor: "#1a2116", fontFamily: "inherit" }}
                 >
-                    <option value="">Sin categoría</option>
+                    <option value="" style={{ backgroundColor: "#1a2116" }}>Sin categoría</option>
                     {CATEGORIES.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
+                        <option key={c.value} value={c.value} style={{ backgroundColor: "#1a2116" }}>{c.label}</option>
                     ))}
                 </select>
             </div>
@@ -904,11 +905,13 @@ function AddEventForm({
     onEventUpdated,
     initialEvent,
     onCancelEdit,
+    onPendingFileChange,
 }: {
     onEventAdded?: () => void;
     onEventUpdated?: () => void;
     initialEvent?: Event;
     onCancelEdit?: () => void;
+    onPendingFileChange?: (bytes: number) => void;
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -936,6 +939,7 @@ function AddEventForm({
     const handleFileSelect = (f: File) => {
         setFile(f);
         setPreview(URL.createObjectURL(f));
+        onPendingFileChange?.(f.size);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -1014,6 +1018,7 @@ function AddEventForm({
             setRegistrationLink("");
             setFile(null);
             setPreview(null);
+            onPendingFileChange?.(0);
             if (initialEvent) {
                 onEventUpdated?.();
                 onCancelEdit?.();
@@ -1121,6 +1126,29 @@ function AddEventForm({
                 )}
             </div>
 
+            {/* Registration link */}
+            <div className="mb-4">
+                <label className="mb-1 block text-sm text-white/60">
+                    Link de registro <span className="text-white/30">(opcional)</span>
+                </label>
+                <input
+                    type="url"
+                    value={registrationLink}
+                    onChange={(e) => setRegistrationLink(e.target.value)}
+                    placeholder="https://forms.google.com/..."
+                    className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-forest-400"
+                />
+                {registrationLink.trim() && (
+                    <p className="mt-1 text-[11px] text-white/30 flex items-center gap-1">
+                        <svg className="w-3 h-3 text-forest-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+                        </svg>
+                        Se mostrará un botón &quot;Registrarse&quot; en la tarjeta del evento
+                    </p>
+                )}
+            </div>
+
             {/* Image (optional) */}
             <div className="mb-4">
                 <label className="mb-1 block text-sm text-white/60">
@@ -1174,6 +1202,7 @@ function EventsPanel() {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+    const [pendingFileSize, setPendingFileSize] = useState(0);
 
     const fetchEvents = useCallback(async () => {
         setLoading(true);
@@ -1205,6 +1234,11 @@ function EventsPanel() {
 
     return (
         <div>
+            {/* Storage preview bar */}
+            <div className="mb-6">
+                <StoragePreviewBar pendingBytes={pendingFileSize} />
+            </div>
+
             <div className="grid gap-8 lg:grid-cols-3">
                 {/* Event List */}
                 <div className="lg:col-span-2">
@@ -1262,6 +1296,7 @@ function EventsPanel() {
                         onEventAdded={editingEvent ? undefined : fetchEvents}
                         onEventUpdated={editingEvent ? handleSaved : undefined}
                         onCancelEdit={handleCancelEdit}
+                        onPendingFileChange={setPendingFileSize}
                     />
                 </div>
             </div>
@@ -1310,10 +1345,10 @@ function AdminDashboard() {
             ),
         },
         diccionario: {
-          label: "Diccionario",
-          icon: (
+            label: "Diccionario",
+            icon: (
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75h8.25M12 12h8.25M12 17.25h8.25M3.75 6.75h3.5v14.5h-3.5V6.75zm0 0V3.75h3.5v3" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75h8.25M12 12h8.25M12 17.25h8.25M3.75 6.75h3.5v14.5h-3.5V6.75zm0 0V3.75h3.5v3" />
                 </svg>
             ),
         },

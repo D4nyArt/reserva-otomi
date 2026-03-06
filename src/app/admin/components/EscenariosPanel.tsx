@@ -16,6 +16,7 @@ import {
     type OtomiScenario,
     type OtomiElement,
 } from "@/lib/supabase";
+import StoragePreviewBar from "./StoragePreviewBar";
 
 /* ─── Gradient Presets ─── */
 const GRADIENT_PRESETS = [
@@ -190,9 +191,11 @@ function PositionGrid({
 function AddElementForm({
     scenarioId,
     onElementAdded,
+    onPendingFileChange,
 }: {
     scenarioId: string;
     onElementAdded: () => void;
+    onPendingFileChange?: (bytes: number) => void;
 }) {
     const [otomiWord, setOtomiWord] = useState("");
     const [spanishWord, setSpanishWord] = useState("");
@@ -208,6 +211,7 @@ function AddElementForm({
         if (f) {
             setFile(f);
             setPreview(URL.createObjectURL(f));
+            onPendingFileChange?.(f.size);
         }
     };
 
@@ -249,6 +253,7 @@ function AddElementForm({
             setEmoji("❓");
             setFile(null);
             setPreview(null);
+            onPendingFileChange?.(0);
             onElementAdded();
         } catch {
             setError("Error inesperado.");
@@ -422,7 +427,7 @@ function ElementListItem({
 /* ═══  ADD SCENARIO FORM  ════════════════ */
 /* ═══════════════════════════════════════════ */
 
-function AddScenarioForm({ onScenarioAdded }: { onScenarioAdded: () => void }) {
+function AddScenarioForm({ onScenarioAdded, onPendingFileChange }: { onScenarioAdded: () => void; onPendingFileChange?: (bytes: number) => void }) {
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [bgGradient, setBgGradient] = useState(GRADIENT_PRESETS[0].value);
@@ -439,6 +444,7 @@ function AddScenarioForm({ onScenarioAdded }: { onScenarioAdded: () => void }) {
         if (f) {
             setBgFile(f);
             setBgPreview(URL.createObjectURL(f));
+            onPendingFileChange?.(f.size);
         }
     };
 
@@ -481,6 +487,7 @@ function AddScenarioForm({ onScenarioAdded }: { onScenarioAdded: () => void }) {
             setBgPreview(null);
             setIsOpen(false);
             setSaving(false);
+            onPendingFileChange?.(0);
             onScenarioAdded();
         } catch {
             setError("Error inesperado.");
@@ -635,9 +642,11 @@ function AddScenarioForm({ onScenarioAdded }: { onScenarioAdded: () => void }) {
 function ScenarioEditor({
     scenario,
     onUpdate,
+    onPendingFileChange,
 }: {
     scenario: OtomiScenario;
     onUpdate: () => void;
+    onPendingFileChange?: (bytes: number) => void;
 }) {
     const [elements, setElements] = useState<OtomiElement[]>([]);
     const [loading, setLoading] = useState(true);
@@ -731,7 +740,7 @@ function ScenarioEditor({
             </div>
 
             {/* Add Element Form */}
-            <AddElementForm scenarioId={scenario.id} onElementAdded={fetchElements} />
+            <AddElementForm scenarioId={scenario.id} onElementAdded={fetchElements} onPendingFileChange={onPendingFileChange} />
         </div>
     );
 }
@@ -744,6 +753,7 @@ export default function EscenariosPanel() {
     const [scenarios, setScenarios] = useState<OtomiScenario[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [pendingFileSize, setPendingFileSize] = useState(0);
 
     const fetchScenarios = useCallback(async () => {
         setLoading(true);
@@ -768,88 +778,96 @@ export default function EscenariosPanel() {
     };
 
     return (
-        <div className="grid gap-8 lg:grid-cols-5">
-            {/* Left: Scenario List */}
-            <div className="lg:col-span-2">
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="font-heading text-lg font-bold text-white">Escenarios</h2>
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/50">
-                        {scenarios.length}
-                    </span>
-                </div>
-
-                {loading ? (
-                    <div className="space-y-3">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="animate-pulse rounded-xl border border-white/10 bg-white/5 p-4 h-20" />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="space-y-2 mb-4">
-                        {scenarios.map((scenario) => (
-                            <div
-                                key={scenario.id}
-                                onClick={() => setSelectedId(scenario.id)}
-                                className={`group flex items-center gap-3 rounded-xl p-3 cursor-pointer transition-all ${selectedId === scenario.id
-                                    ? "border border-forest-500/50 bg-forest-500/10"
-                                    : "border border-white/10 bg-white/5 hover:border-white/20"
-                                    }`}
-                            >
-                                {/* Mini preview */}
-                                <div
-                                    className="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center text-xl overflow-hidden relative"
-                                    style={{ background: scenario.bg_gradient }}
-                                >
-                                    {scenario.bg_image_url ? (
-                                        <Image
-                                            src={scenario.bg_image_url}
-                                            alt={scenario.subtitle}
-                                            fill
-                                            className="object-cover"
-                                            unoptimized
-                                        />
-                                    ) : (
-                                        scenario.bg_emoji
-                                    )}
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <h4 className="text-sm font-semibold text-white truncate">{scenario.title}</h4>
-                                    <p className="text-xs text-white/40 truncate">{scenario.subtitle}</p>
-                                </div>
-                                <div onClick={(e) => e.stopPropagation()}>
-                                    <DeleteBtn
-                                        deleting={false}
-                                        onClick={() => handleDeleteScenario(scenario.id)}
-                                        small
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                <AddScenarioForm onScenarioAdded={fetchScenarios} />
+        <div>
+            {/* Storage preview bar */}
+            <div className="mb-6">
+                <StoragePreviewBar pendingBytes={pendingFileSize} />
             </div>
 
-            {/* Right: Scenario Editor */}
-            <div className="lg:col-span-3">
-                {selectedScenario ? (
-                    <ScenarioEditor
-                        key={selectedScenario.id}
-                        scenario={selectedScenario}
-                        onUpdate={fetchScenarios}
-                    />
-                ) : (
-                    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/15 p-12 text-center">
-                        <span className="text-4xl mb-3">🌿</span>
-                        <p className="text-sm text-white/40 font-medium">
-                            Selecciona un escenario para editarlo
-                        </p>
-                        <p className="text-xs text-white/25 mt-1">
-                            O crea uno nuevo con el botón de la izquierda
-                        </p>
+            <div className="grid gap-8 lg:grid-cols-5">
+                {/* Left: Scenario List */}
+                <div className="lg:col-span-2">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h2 className="font-heading text-lg font-bold text-white">Escenarios</h2>
+                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/50">
+                            {scenarios.length}
+                        </span>
                     </div>
-                )}
+
+                    {loading ? (
+                        <div className="space-y-3">
+                            {Array.from({ length: 3 }).map((_, i) => (
+                                <div key={i} className="animate-pulse rounded-xl border border-white/10 bg-white/5 p-4 h-20" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="space-y-2 mb-4">
+                            {scenarios.map((scenario) => (
+                                <div
+                                    key={scenario.id}
+                                    onClick={() => setSelectedId(scenario.id)}
+                                    className={`group flex items-center gap-3 rounded-xl p-3 cursor-pointer transition-all ${selectedId === scenario.id
+                                        ? "border border-forest-500/50 bg-forest-500/10"
+                                        : "border border-white/10 bg-white/5 hover:border-white/20"
+                                        }`}
+                                >
+                                    {/* Mini preview */}
+                                    <div
+                                        className="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center text-xl overflow-hidden relative"
+                                        style={{ background: scenario.bg_gradient }}
+                                    >
+                                        {scenario.bg_image_url ? (
+                                            <Image
+                                                src={scenario.bg_image_url}
+                                                alt={scenario.subtitle}
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+                                        ) : (
+                                            scenario.bg_emoji
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <h4 className="text-sm font-semibold text-white truncate">{scenario.title}</h4>
+                                        <p className="text-xs text-white/40 truncate">{scenario.subtitle}</p>
+                                    </div>
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <DeleteBtn
+                                            deleting={false}
+                                            onClick={() => handleDeleteScenario(scenario.id)}
+                                            small
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <AddScenarioForm onScenarioAdded={fetchScenarios} onPendingFileChange={setPendingFileSize} />
+                </div>
+
+                {/* Right: Scenario Editor */}
+                <div className="lg:col-span-3">
+                    {selectedScenario ? (
+                        <ScenarioEditor
+                            key={selectedScenario.id}
+                            scenario={selectedScenario}
+                            onUpdate={fetchScenarios}
+                            onPendingFileChange={setPendingFileSize}
+                        />
+                    ) : (
+                        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/15 p-12 text-center">
+                            <span className="text-4xl mb-3">🌿</span>
+                            <p className="text-sm text-white/40 font-medium">
+                                Selecciona un escenario para editarlo
+                            </p>
+                            <p className="text-xs text-white/25 mt-1">
+                                O crea uno nuevo con el botón de la izquierda
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -93,8 +93,31 @@ export async function addHighlightCard(card: {
     return data;
 }
 
+/**
+ * Extract the filename from a Supabase Storage public URL.
+ * e.g. "https://xxx.supabase.co/storage/v1/object/public/bucket-name/my-file.png"
+ * returns "my-file.png"
+ */
+function extractStorageFilename(publicUrl: string, bucket: string): string | null {
+    try {
+        const marker = `/storage/v1/object/public/${bucket}/`;
+        const idx = publicUrl.indexOf(marker);
+        if (idx === -1) return null;
+        return publicUrl.substring(idx + marker.length);
+    } catch {
+        return null;
+    }
+}
+
 export async function deleteHighlightCard(id: string): Promise<boolean> {
     if (!isConfigured) return false;
+
+    // fetch the card first so we can delete its image from storage
+    const { data: card } = await supabase
+        .from("highlight_cards")
+        .select("image_url")
+        .eq("id", id)
+        .single();
 
     const { error } = await supabase
         .from("highlight_cards")
@@ -104,6 +127,19 @@ export async function deleteHighlightCard(id: string): Promise<boolean> {
     if (error) {
         console.error("Error deleting highlight card:", error);
         return false;
+    }
+
+    // clean up the storage file
+    if (card?.image_url) {
+        const fileName = extractStorageFilename(card.image_url, "highlight-images");
+        if (fileName) {
+            const { error: storageError } = await supabase.storage
+                .from("highlight-images")
+                .remove([fileName]);
+            if (storageError) {
+                console.error("Error deleting image from storage:", storageError);
+            }
+        }
     }
 
     return true;
@@ -209,6 +245,13 @@ export async function addEvent(event: {
 export async function deleteEvent(id: string): Promise<boolean> {
     if (!isConfigured) return false;
 
+    // fetch the event first so we can delete its image from storage
+    const { data: event } = await supabase
+        .from("events")
+        .select("image_url")
+        .eq("id", id)
+        .single();
+
     const { error } = await supabase
         .from("events")
         .delete()
@@ -217,6 +260,19 @@ export async function deleteEvent(id: string): Promise<boolean> {
     if (error) {
         console.error("Error deleting event:", error);
         return false;
+    }
+
+    // clean up the storage file
+    if (event?.image_url) {
+        const fileName = extractStorageFilename(event.image_url, "highlight-images");
+        if (fileName) {
+            const { error: storageError } = await supabase.storage
+                .from("highlight-images")
+                .remove([fileName]);
+            if (storageError) {
+                console.error("Error deleting event image from storage:", storageError);
+            }
+        }
     }
 
     return true;

@@ -71,7 +71,7 @@ function CardModal({
 
             {/* Modal */}
             <div
-                className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl animate-[scale-in_0.25s_ease-out]"
+                className="relative w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl animate-[scale-in_0.25s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close button */}
@@ -84,8 +84,8 @@ function CardModal({
                     </svg>
                 </button>
 
-                {/* Image */}
-                <div className="relative h-64 w-full">
+                {/* Image — fixed height, never scrolls */}
+                <div className="relative h-56 w-full shrink-0">
                     <Image
                         src={image}
                         alt={title}
@@ -106,8 +106,8 @@ function CardModal({
                     )}
                 </div>
 
-                {/* Content */}
-                <div className="relative -mt-4 px-7 pb-7">
+                {/* Content — scrollable */}
+                <div className="relative -mt-4 overflow-y-auto px-7 pb-7">
                     <h3 className="font-heading mb-3 text-2xl font-bold text-forest-900">
                         {title}
                     </h3>

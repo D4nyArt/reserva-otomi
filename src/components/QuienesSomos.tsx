@@ -41,18 +41,34 @@ export default function QuienesSomos() {
                 {/* Section Header */}
                 <div className="mb-16 text-center">
                     <span className="mb-3 inline-block text-sm font-semibold tracking-widest text-forest-600 uppercase">
-                        Quiénes Somos
+                        Sobre Nosotros
                     </span>
                     <h2 className="font-heading mb-4 text-4xl font-bold text-forest-950 md:text-5xl">
-                        Guardianes del{" "}
+                        Preocupados por{" "}
                         <span className="bg-gradient-to-r from-forest-600 to-water-600 bg-clip-text text-transparent">
-                            Patrimonio Natural
+                            nuestras raíces
                         </span>
                     </h2>
-                    <p className="mx-auto max-w-2xl text-charcoal/60">
-                        Somos una organización comunitaria comprometida con la conservación
-                        del embalse natural y la revitalización de la cultura Hñähñu.
+                    <p className="mx-auto max-w-xl text-charcoal/60">
+                        Somos un colectivo comprometido con la preservación ecológica
+                        y la revitalización de la cultura Hñähñu.
                     </p>
+                </div>
+
+                {/* YouTube Video */}
+                <div className="mx-auto mb-16 w-full max-w-4xl">
+                    <div className="overflow-hidden rounded-2xl border border-forest-100 shadow-lg" style={{ aspectRatio: '16/9' }}>
+                        <iframe
+                            title="Video de la Reserva Ecológica Otomí"
+                            src="https://www.youtube.com/embed/zhtbnEFweN8?si=3_FV9xT13MvTfAgk"
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            loading="lazy"
+                        />
+                    </div>
                 </div>
 
                 {/* Cards */}

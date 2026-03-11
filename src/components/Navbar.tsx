@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const navLinks = [
-    { label: "Quiénes Somos", href: "/#quienes-somos" },
+    { label: "Sobre Nosotros", href: "/#quienes-somos" },
     { label: "Raíces", href: "/#raices" },
     { label: "Preservación", href: "/#preservacion" },
     { label: "Eventos", href: "/#eventos" },
@@ -33,7 +33,7 @@ export default function Navbar() {
                     href="/"
                     className="font-heading text-2xl font-bold tracking-tight text-white"
                 >
-                    <span className="text-forest-400">Agua</span> Barranca
+                    <span className="text-forest-400">Ntejë Ñie</span> Lengü
                 </Link>
 
                 {/* Desktop Links */}

@@ -40,8 +40,7 @@ export default function Testimonials() {
                         </span>
                     </h2>
                     <p className="mx-auto max-w-2xl text-charcoal/60">
-                        Lo que dicen quienes han vivido nuestras experiencias de ecoturismo,
-                        cultura y conservación.
+                        Conoce las experiencias de las personas que han participado en nuestras actividades
                     </p>
                 </div>
 

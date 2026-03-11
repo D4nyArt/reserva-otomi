@@ -24,7 +24,7 @@ export default function Hero() {
                 {/* Badge */}
                 <div className="animate-fade-in mb-6 rounded-full border border-white/20 bg-white/10 px-5 py-2 backdrop-blur-sm">
                     <span className="text-sm font-medium tracking-widest text-forest-300 uppercase">
-                        Zona Otomí • Reserva Natural
+                        Zona Otomí • Reserva Ecológica
                     </span>
                 </div>
 
@@ -33,9 +33,9 @@ export default function Hero() {
                     className="animate-fade-in-up font-heading max-w-4xl text-5xl leading-tight font-bold tracking-tight text-white md:text-7xl lg:text-8xl"
                     style={{ animationDelay: "200ms" }}
                 >
-                    Agua{" "}
+                    Ntejë Ñie{" "}
                     <span className="bg-gradient-to-r from-forest-300 to-water-400 bg-clip-text text-transparent">
-                        Barranca
+                        Lengü
                     </span>
                 </h1>
 
@@ -44,7 +44,7 @@ export default function Hero() {
                     className="animate-fade-in-up mt-6 max-w-2xl text-lg text-white/80 md:text-xl"
                     style={{ animationDelay: "400ms" }}
                 >
-                    Preservando el patrimonio natural y cultural de la zona Otomí.
+                    Preservamos el patrimonio natural y cultural otomí de la zona de San Jerónimo Acazulco.
                     Protegemos el agua, la tierra y las tradiciones que nos definen.
                 </p>
 
@@ -57,7 +57,7 @@ export default function Hero() {
                         href="#quienes-somos"
                         className="rounded-full bg-forest-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-forest-400 hover:shadow-forest-500/30 hover:shadow-xl active:scale-95"
                     >
-                        Descubre Nuestra Misión
+                        Sobre Nosotros
                     </a>
                     <a
                         href="#eventos"
@@ -65,16 +65,6 @@ export default function Hero() {
                     >
                         Próximos Eventos
                     </a>
-                </div>
-
-                {/* Scroll indicator */}
-                <div className="animate-fade-in absolute bottom-20 flex flex-col items-center gap-2" style={{ animationDelay: "1s" }}>
-                    <span className="text-xs tracking-widest text-white/50 uppercase">
-                        Explorar
-                    </span>
-                    <div className="h-10 w-6 rounded-full border-2 border-white/30 p-1">
-                        <div className="h-2 w-full animate-bounce rounded-full bg-forest-400" />
-                    </div>
                 </div>
             </div>
         </section>

@@ -217,7 +217,7 @@ export default function Highlights() {
                 titlePrefix="Cultura"
                 titleHighlight="Viva"
                 titleGradient="from-earth-500 to-earth-700"
-                subtitle="Las tradiciones Otomíes son el corazón de nuestra identidad. Trabajamos para que su lengua, gastronomía y medicina continúen floreciendo."
+                subtitle="Las tradiciones otomíes son el corazón de nuestra identidad. Trabajamos para que nuestra historia, lengua y gastronomía continúen floreciendo."
                 borderGradient="from-transparent via-earth-300/40 to-transparent"
                 cards={raices}
                 loading={loading}
@@ -229,10 +229,10 @@ export default function Highlights() {
                 bgClass="bg-cream"
                 label="Preservación"
                 labelColor="text-water-600"
-                titlePrefix="Protegiendo Nuestro"
-                titleHighlight="Ecosistema"
+                titlePrefix="Nuestro compromiso con la"
+                titleHighlight="casa común"
                 titleGradient="from-water-500 to-forest-600"
-                subtitle="Cada acción cuenta. Desde la reforestación hasta la conservación del agua, trabajamos para garantizar un futuro sustentable."
+                subtitle="Buscamos regresarle a la tierra un poco de lo que ella nos ha regalado, a través de la preservación de los recursos naturales."
                 borderGradient="from-transparent via-water-400/40 to-transparent"
                 cards={preservacion}
                 loading={loading}

@@ -5,7 +5,7 @@ export default function Hero() {
         <section id="hero" className="relative h-screen w-full overflow-hidden">
             {/* Background Image */}
             <Image
-                src="/images/hero.png"
+                src="/images/hero3.png"
                 alt="Vista panorámica de la Reserva Natural Otomí"
                 fill
                 priority

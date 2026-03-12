@@ -199,7 +199,7 @@ function AddElementForm({
 }) {
     const [otomiWord, setOtomiWord] = useState("");
     const [spanishWord, setSpanishWord] = useState("");
-    const [emoji, setEmoji] = useState("❓");
+    const [emoji, setEmoji] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
@@ -250,7 +250,7 @@ function AddElementForm({
 
             setOtomiWord("");
             setSpanishWord("");
-            setEmoji("❓");
+            setEmoji("");
             setFile(null);
             setPreview(null);
             onPendingFileChange?.(0);
@@ -295,7 +295,7 @@ function AddElementForm({
 
             {/* Emoji selector */}
             <div className="mb-3">
-                <label className="mb-1 block text-xs text-white/50">Emoji (si no hay imagen)</label>
+                <label className="mb-1 block text-xs text-white/50">Emoji (opcional si no hay imagen)</label>
                 <div className="flex items-center gap-2">
                     <input
                         type="text"
@@ -309,7 +309,7 @@ function AddElementForm({
                             <button
                                 key={e}
                                 type="button"
-                                onClick={() => setEmoji(e)}
+                                onClick={() => setEmoji(emoji === e ? "" : e)}
                                 className={`w-7 h-7 rounded text-sm flex items-center justify-center transition-all ${emoji === e ? "bg-amber-500/30 ring-1 ring-amber-400" : "bg-white/5 hover:bg-white/10"}`}
                             >
                                 {e}
@@ -431,7 +431,7 @@ function AddScenarioForm({ onScenarioAdded, onPendingFileChange }: { onScenarioA
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [bgGradient, setBgGradient] = useState(GRADIENT_PRESETS[0].value);
-    const [bgEmoji, setBgEmoji] = useState("🌿");
+    const [bgEmoji, setBgEmoji] = useState("");
     const [bgFile, setBgFile] = useState<File | null>(null);
     const [bgPreview, setBgPreview] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
@@ -482,7 +482,7 @@ function AddScenarioForm({ onScenarioAdded, onPendingFileChange }: { onScenarioA
             setTitle("");
             setSubtitle("");
             setBgGradient(GRADIENT_PRESETS[0].value);
-            setBgEmoji("🌿");
+            setBgEmoji("");
             setBgFile(null);
             setBgPreview(null);
             setIsOpen(false);
@@ -559,18 +559,29 @@ function AddScenarioForm({ onScenarioAdded, onPendingFileChange }: { onScenarioA
 
             {/* Emoji picker */}
             <div className="mb-3">
-                <label className="mb-1 block text-xs text-white/50">Emoji decorativo</label>
-                <div className="flex gap-1.5">
-                    {EMOJI_OPTIONS.map((e) => (
-                        <button
-                            key={e}
-                            type="button"
-                            onClick={() => setBgEmoji(e)}
-                            className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center transition-all ${bgEmoji === e ? "bg-amber-500/30 ring-1 ring-amber-400" : "bg-white/5 hover:bg-white/10"}`}
-                        >
-                            {e}
-                        </button>
-                    ))}
+                <label className="mb-1 block text-xs text-white/50">
+                    Emoji decorativo <span className="text-white/30">(opcional)</span>
+                </label>
+                <div className="flex items-center gap-2">
+                    <input
+                        type="text"
+                        value={bgEmoji}
+                        onChange={(e) => setBgEmoji(e.target.value)}
+                        className="w-16 rounded-lg border border-white/15 bg-white/5 px-2 py-2 text-center text-lg text-white outline-none focus:border-forest-400"
+                        maxLength={4}
+                    />
+                    <div className="flex gap-1.5 flex-wrap">
+                        {EMOJI_OPTIONS.map((e) => (
+                            <button
+                                key={e}
+                                type="button"
+                                onClick={() => setBgEmoji(bgEmoji === e ? "" : e)}
+                                className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center transition-all ${bgEmoji === e ? "bg-amber-500/30 ring-1 ring-amber-400" : "bg-white/5 hover:bg-white/10"}`}
+                            >
+                                {e}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -688,7 +699,7 @@ function ScenarioEditor({
         <div>
             {/* Scenario header */}
             <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">{scenario.bg_emoji}</span>
+                {scenario.bg_emoji && <span className="text-2xl">{scenario.bg_emoji}</span>}
                 <div>
                     <h3 className="font-heading text-lg font-bold text-amber-400">{scenario.title}</h3>
                     <p className="text-sm text-white/50">{scenario.subtitle}</p>

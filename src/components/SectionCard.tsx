@@ -18,6 +18,7 @@ interface SectionCardProps {
     tag?: string;
     tagColor?: string;
     category?: string | null;
+    clickable?: boolean;
 }
 
 /* ─── Card Detail Modal ─── */
@@ -111,7 +112,7 @@ function CardModal({
                     <h3 className="font-heading mb-3 text-2xl font-bold text-forest-900">
                         {title}
                     </h3>
-                    <p className="text-sm leading-relaxed text-charcoal/70">
+                    <p className="whitespace-pre-wrap text-base leading-relaxed text-charcoal/80">
                         {longDescription}
                     </p>
 
@@ -142,14 +143,15 @@ export default function SectionCard({
     tag,
     tagColor = "bg-forest-500",
     category,
+    clickable = true,
 }: SectionCardProps) {
     const [showModal, setShowModal] = useState(false);
 
     return (
         <>
             <div
-                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-                onClick={() => setShowModal(true)}
+                className={`group relative overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${clickable ? "cursor-pointer" : ""}`}
+                onClick={clickable ? () => setShowModal(true) : undefined}
             >
                 {/* Image */}
                 <div className="relative h-56 overflow-hidden">
@@ -189,7 +191,7 @@ export default function SectionCard({
             </div>
 
             {/* Detail modal */}
-            {showModal && (
+            {clickable && showModal && (
                 <CardModal
                     image={image}
                     title={title}

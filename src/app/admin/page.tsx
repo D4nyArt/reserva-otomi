@@ -19,10 +19,10 @@ import EscenariosPanel from "./components/EscenariosPanel";
 import UsagePanel from "./components/UsagePanel";
 import StoragePreviewBar from "./components/StoragePreviewBar";
 import DictionaryManagerPanel from "./components/DictionaryManagerPanel";
-
+import TestimonialsPanel from "./components/TestimonialsPanel";
 
 type Section = "raices" | "preservacion";
-type AdminTab = "tarjetas" | "eventos" | "escenarios" | "uso" | "diccionario";
+type AdminTab = "tarjetas" | "eventos" | "escenarios" | "uso" | "diccionario" | "testimonios";
 
 const CATEGORIES = [
     { value: "ecoturismo", label: "Ecoturismo", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700" },
@@ -1348,6 +1348,14 @@ function AdminDashboard() {
                 </svg>
             ),
         },
+        testimonios: {
+            label: "Testimonios",
+            icon: (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                </svg>
+            ),
+        },
         escenarios: {
             label: "Escenarios Otomí",
             icon: (
@@ -1356,19 +1364,26 @@ function AdminDashboard() {
                 </svg>
             ),
         },
-        uso: {
-            label: "Uso",
-            icon: (
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                </svg>
-            ),
-        },
         diccionario: {
             label: "Diccionario",
             icon: (
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75h8.25M12 12h8.25M12 17.25h8.25M3.75 6.75h3.5v14.5h-3.5V6.75zm0 0V3.75h3.5v3" />
+                </svg>
+            ), testimonios: {
+                label: "Testimonios",
+                icon: (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                    </svg>
+                ),
+            },
+        },
+        uso: {
+            label: "Uso",
+            icon: (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                 </svg>
             ),
         },
@@ -1397,6 +1412,24 @@ function AdminDashboard() {
             </header>
 
             <div className="mx-auto max-w-6xl px-6 py-10">
+                {/* Recursos Extra link */}
+                <div className="mb-6 flex justify-end">
+                    <a
+                        href="https://www.canva.com/design/DAHC3af9NOg/tIAPycB18Ef0aqPyucgoFQ/edit?utm_content=DAHC3af9NOg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white/60 transition-all hover:border-forest-500/40 hover:bg-forest-500/10 hover:text-forest-400 hover:shadow-lg hover:shadow-forest-500/5"
+                    >
+                        <svg className="w-4 h-4 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                        Recursos Extra
+                        <svg className="w-3 h-3 opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15" />
+                        </svg>
+                    </a>
+                </div>
+
                 {/* Top-level Tabs */}
                 <div className="mb-10 flex gap-3">
                     {(Object.keys(tabConfig) as AdminTab[]).map((tab) => (
@@ -1417,9 +1450,10 @@ function AdminDashboard() {
                 {/* Panel content */}
                 {activeTab === "tarjetas" && <HighlightCardsPanel />}
                 {activeTab === "eventos" && <EventsPanel />}
+                {activeTab === "testimonios" && <TestimonialsPanel />}
                 {activeTab === "escenarios" && <EscenariosPanel />}
-                {activeTab === "uso" && <UsagePanel />}
                 {activeTab === "diccionario" && <DictionaryManagerPanel />}
+                {activeTab === "uso" && <UsagePanel />}
             </div>
         </div>
     );

@@ -6,6 +6,8 @@ import Eventos from "@/components/Eventos";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>

@@ -288,10 +288,10 @@ export default function Traductor() {
             {/* Hero header */}
             <div className="mx-auto mb-12 max-w-4xl px-6 text-center">
                 <span className="mb-3 inline-block text-sm font-semibold tracking-widest text-forest-400 uppercase">
-                    Diccionario Hñähñu
+                    Diccionario Hñähñu (Yühú)
                 </span>
                 <h1 className="font-heading mb-4 text-4xl font-bold text-white md:text-5xl">
-                    Traductor{" "}
+                    Diccionario{" "}
                     <span className="bg-gradient-to-r from-forest-400 to-water-400 bg-clip-text text-transparent">
                         Español ↔ Otomí
                     </span>

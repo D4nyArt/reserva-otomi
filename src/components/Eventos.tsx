@@ -220,7 +220,7 @@ function EventCard({ event, onSelect }: { event: Event; onSelect: (e: Event) => 
 }
 
 /* ─── Full Calendar View ─── */
-function CalendarView({ events, activeFilter }: { events: Event[]; activeFilter: string | null }) {
+function CalendarView({ events, activeFilter, onSelect }: { events: Event[]; activeFilter: string | null; onSelect: (e: Event) => void }) {
     const [currentMonth, setCurrentMonth] = useState(() => {
         // Default to the month of the first upcoming event, or current month
         const now = new Date();
@@ -370,7 +370,8 @@ function CalendarView({ events, activeFilter }: { events: Event[]; activeFilter:
                                 return (
                                     <div
                                         key={ev.id}
-                                        className="rounded-xl border border-white/10 bg-white/5 p-4 transition-all hover:border-white/20"
+                                        onClick={() => onSelect(ev)}
+                                        className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 transition-all hover:-translate-y-1 hover:border-white/20 hover:bg-white/10"
                                     >
                                         <div className="mb-2 flex items-center gap-2">
                                             <span className={`${style.bg} ${style.text} rounded-full px-2.5 py-0.5 text-xs font-semibold`}>
@@ -557,7 +558,7 @@ export default function Eventos() {
                             </div>
                         )
                     ) : (
-                        <CalendarView events={events} activeFilter={activeFilter} />
+                        <CalendarView events={events} activeFilter={activeFilter} onSelect={setSelectedEvent} />
                     )}
                 </div>
             </section>

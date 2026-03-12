@@ -9,7 +9,6 @@ export default function TraductorPage() {
             <main>
                 <Traductor />
             </main>
-            <Footer />
         </>
     );
 }

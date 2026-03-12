@@ -39,13 +39,13 @@ export default function Navbar() {
                 {/* Desktop Links */}
                 <div className="hidden items-center gap-8 md:flex">
                     {navLinks.map((link) => (
-                        <a
+                        <Link
                             key={link.href}
                             href={link.href}
                             className="relative text-sm font-medium text-white/80 transition-colors hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-forest-400 after:transition-all hover:after:w-full"
                         >
                             {link.label}
-                        </a>
+                        </Link>
                     ))}
 
                     {/* Aprender Otomí */}
@@ -61,16 +61,16 @@ export default function Navbar() {
                         href="/traductor"
                         className="relative text-sm font-medium text-white/80 transition-colors hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-forest-400 after:transition-all hover:after:w-full"
                     >
-                        Traductor
+                        Diccionario
                     </Link>
 
                     {/* Botón Contacto */}
-                    <a
+                    <Link
                         href="/#contacto"
                         className="rounded-full bg-forest-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-forest-400 hover:shadow-forest-500/30 hover:shadow-xl active:scale-95"
                     >
                         Contacto
-                    </a>
+                    </Link>
                 </div>
 
                 {/* Mobile Toggle */}
@@ -103,7 +103,7 @@ export default function Navbar() {
             >
                 <div className="flex flex-col items-center gap-8">
                     {navLinks.map((link, i) => (
-                        <a
+                        <Link
                             key={link.href}
                             href={link.href}
                             onClick={() => setIsMobileOpen(false)}
@@ -111,7 +111,7 @@ export default function Navbar() {
                             style={{ animationDelay: `${i * 100}ms` }}
                         >
                             {link.label}
-                        </a>
+                        </Link>
                     ))}
 
                     {/* Aprender Otomí en Mobile */}
@@ -133,13 +133,13 @@ export default function Navbar() {
                     </Link>
 
                     {/* Contacto */}
-                    <a
+                    <Link
                         href="/#contacto"
                         onClick={() => setIsMobileOpen(false)}
                         className="mt-4 rounded-full bg-forest-500 px-10 py-3.5 text-lg font-semibold text-white shadow-xl transition-all hover:bg-forest-400"
                     >
                         Contacto
-                    </a>
+                    </Link>
                 </div>
             </div>
         </nav>

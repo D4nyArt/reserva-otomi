@@ -531,6 +531,86 @@ export async function uploadOtomiScenarioBgImage(
     return publicUrl;
 }
 
+/* ─── Testimonials CRUD ─── */
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+    if (!isConfigured) return [];
+
+    const { data, error } = await supabase
+        .from("testimonials")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Error fetching testimonials:", error);
+        return [];
+    }
+
+    return data ?? [];
+}
+
+export async function addTestimonial(testimonial: {
+    author: string;
+    content: string;
+    event_id?: string | null;
+}): Promise<Testimonial | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("testimonials")
+        .insert(testimonial)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error adding testimonial:", error);
+        return null;
+    }
+
+    return data;
+}
+
+export async function updateTestimonial(
+    id: string,
+    updates: {
+        author?: string;
+        content?: string;
+        event_id?: string | null;
+    }
+): Promise<Testimonial | null> {
+    if (!isConfigured) return null;
+
+    const { data, error } = await supabase
+        .from("testimonials")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error updating testimonial:", error);
+        return null;
+    }
+
+    return data;
+}
+
+export async function deleteTestimonial(id: string): Promise<boolean> {
+    if (!isConfigured) return false;
+
+    const { error } = await supabase
+        .from("testimonials")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error("Error deleting testimonial:", error);
+        return false;
+    }
+
+    return true;
+}
+
 /* ─── Supabase Usage Stats ─── */
 
 export interface BucketUsage {
@@ -595,7 +675,7 @@ export async function getSupabaseUsageStats(): Promise<SupabaseUsageStats | null
     if (!isConfigured) return null;
 
     const STORAGE_BUCKETS = ["highlight-images", "otomi-element-images"];
-    const DB_TABLES = ["events", "highlight_cards", "otomi_scenarios", "otomi_elements"];
+    const DB_TABLES = ["events", "highlight_cards", "otomi_scenarios", "otomi_elements", "testimonials"];
 
     const [buckets, tables] = await Promise.all([
         Promise.all(STORAGE_BUCKETS.map(getBucketUsage)),

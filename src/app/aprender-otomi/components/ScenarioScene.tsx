@@ -67,14 +67,14 @@ export default function ScenarioScene({
                     <div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/20 group-focus:bg-white/20 transition-all duration-300 scale-150 blur-md" />
 
                     {/* Element container */}
-                    <div className="relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-2 border-white/60 group-hover:border-amber-400 group-focus:border-amber-400 group-hover:shadow-amber-400/30 group-hover:shadow-xl transition-all duration-300">
+                    <div className="relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-2 border-white/60 group-hover:border-amber-400 group-focus:border-amber-400 group-hover:shadow-amber-400/30 group-hover:shadow-xl transition-all duration-300 overflow-hidden">
                         {el.imageUrl ? (
                             <Image
                                 src={el.imageUrl}
                                 alt={el.spanishWord}
-                                width={64}
-                                height={64}
-                                className="rounded-full object-contain w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16"
+                                width={80}
+                                height={80}
+                                className="object-contain scale-130 w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24"
                                 unoptimized
                             />
                         ) : (

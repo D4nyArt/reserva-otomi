@@ -24,7 +24,7 @@ export default function Hero() {
                 {/* Badge */}
                 <div className="animate-fade-in mb-6 rounded-full border border-white/20 bg-white/10 px-5 py-2 backdrop-blur-sm">
                     <span className="text-sm font-medium tracking-widest text-forest-300 uppercase">
-                        Zona Otomí • Reserva Ecológica
+                        Reserva ecológica | Acazulco
                     </span>
                 </div>
 

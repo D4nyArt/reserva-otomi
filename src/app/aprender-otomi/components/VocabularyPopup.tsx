@@ -124,14 +124,14 @@ export default function VocabularyPopup({
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Circular element display */}
-                <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-full bg-white/95 border-4 border-amber-500 shadow-2xl shadow-amber-500/20 flex items-center justify-center mb-8 animate-scale-in">
+                <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-full bg-white/95 border-4 border-amber-500 shadow-2xl shadow-amber-500/20 flex items-center justify-center mb-8 animate-scale-in overflow-hidden">
                     {element.imageUrl ? (
                         <Image
                             src={element.imageUrl}
                             alt={element.spanishWord}
-                            width={200}
-                            height={200}
-                            className="rounded-full object-contain w-32 h-32 sm:w-44 sm:h-44 md:w-52 md:h-52"
+                            width={300}
+                            height={300}
+                            className="object-contain scale-[1.3] w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64"
                             unoptimized
                         />
                     ) : (

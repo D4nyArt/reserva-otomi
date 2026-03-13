@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
   display: "swap",
 });
@@ -17,17 +11,17 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Reserva Natural Otomí — Agua Barranca",
   description:
-    "Organización dedicada a la preservación del embalse natural y la cultura Otomí. Descubre nuestras raíces, eventos de ecoturismo, talleres culturales y esfuerzos de conservación.",
+    "Organización dedicada a la preservación del embalse natural y la cultura Otomí. Descubre nuestras raíces, eventos de naturaleza, talleres culturales y esfuerzos de conservación.",
   keywords: [
     "reserva natural",
     "otomí",
-    "ecoturismo",
+    "naturaleza",
     "conservación",
     "cultura indígena",
     "agua barranca",
   ],
   openGraph: {
-    title: "Reserva Natural Otomí — Agua Barranca",
+    title: "Reserva ecológica | Acazulco",
     description:
       "Preservando el patrimonio natural y cultural de la zona Otomí.",
     type: "website",
@@ -43,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${outfit.variable} font-body antialiased`}
+        className={`${montserrat.variable} font-body antialiased`}
       >
         {children}
       </body>

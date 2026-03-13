@@ -3,20 +3,26 @@ import SectionCard from "./SectionCard";
 const values = [
     {
         image: "/images/arraigo.png",
-        title: "Arraigo: Nuestro puente con el origen",
-        description:
+        title: "Arraigo",
+        shortDescription:
+            "Nuestro puente con el origen",
+        longDescription:
             "Nacimos a finales de 2017 bajo el nombre de “Ntejë Ñie Lengü”, que en otomí significa ‘Agua en la barranca chica’.  Somos un puente vivo que busca reconectar a la gente de San Jerónimo Acazulco con su bosque. Nuestro arraigo surge de una necesidad profunda por defender el territorio que habitamos. Trabajamos para que las nuevas generaciones vuelvan a mirar hacia la montaña, y reconozcan en ella su propia historia así como que adquieran el sentido de pertenencia hacia la tierra y los recursos naturales que siempre nos han dado sustento. ",
     },
     {
         image: "/images/agradar.png",
-        title: "Agradecimiento: El agradecimiento por lo que somos",
-        description:
+        title: "Agradecimiento",
+        shortDescription:
+            "El agradecimiento por lo que somos",
+        longDescription:
             "Proteger nuestro hogar nace de una reciprocidad profunda. Así como bajo la tierra las raíces se entrelazan con fuerza, como manos invisibles que se sostienen para mantener vivo al bosque, nuestro colectivo busca fundirse con la naturaleza. Nuestro interés va más allá de sembrar árboles o rescatar técnicas agrícolas; sino que se concentra en reconocer que somos uno mismo con nuestro entorno. Agradecemos a los guardianes del lugar devolviéndoles cuidado y respeto, honrando la lengua y la sabiduría que nos han arropado desde siempre. Queremos ser ese tejido firme donde las voces de nuestros antepasos y las ideas de las nuevas mentes se sostengan mutuamente para construir nuestro futuro.",
     },
     {
         image: "/images/comunidad.png",
-        title: "Comunidad: Avanzar en el mismo camino",
-        description:
+        title: "Comunidad",
+        shortDescription:
+            "Avanzar en el mismo camino",
+        longDescription:
             "Sabemos que los grandes cambios no ocurren desde el individuo, sino en comunidad. Frente al desinterés o los objetivos personales que a veces nos dividen, nosotros oponemos la fuerza del trabajo en equipo. Nuestra filosofía es directa e inquebrantable: si alguien tropieza, le damos la mano, lo levantamos y avanzamos todos juntos. Queremos demostrar todos los días que, unidos, somos capaces de transformar nuestro entorno, creando un espacio donde cada persona pueda aportar, organizarse y caminar hacia un propósito común.",
     },
 ];
@@ -50,7 +56,7 @@ export default function QuienesSomos() {
                     <div className="overflow-hidden rounded-2xl border border-forest-100 shadow-lg" style={{ aspectRatio: '16/9' }}>
                         <iframe
                             title="Video de la Reserva Ecológica Otomí"
-                            src="https://www.youtube.com/embed/zhtbnEFweN8?si=3_FV9xT13MvTfAgk"
+                            src="https://www.youtube.com/embed/8-C-FGf_h74?si=6l7EN7JhpHVZsR91"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
@@ -61,16 +67,16 @@ export default function QuienesSomos() {
                     </div>
                 </div>
 
-                {/* Cards — static, not clickable */}
+                {/* Cards — now clickable with short and long descriptions */}
                 <div className="grid gap-8 md:grid-cols-3">
                     {values.map((item) => (
                         <SectionCard
                             key={item.title}
                             image={item.image}
                             title={item.title}
-                            shortDescription={item.description}
-                            longDescription={item.description}
-                            clickable={false}
+                            shortDescription={item.shortDescription}
+                            longDescription={item.longDescription}
+                            clickable={true}
                         />
                     ))}
                 </div>

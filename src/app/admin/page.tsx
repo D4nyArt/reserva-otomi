@@ -1,5 +1,12 @@
 "use client";
 
+/** Shift midnight-UTC dates to noon so getDate() etc. stay on the correct
+ *  calendar day regardless of the browser's local timezone offset.  */
+function parseEventDate(dateStr: string): Date {
+    const normalized = dateStr.replace("T00:00:00", "T12:00:00");
+    return new Date(normalized);
+}
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import {
@@ -25,10 +32,9 @@ type Section = "raices" | "preservacion";
 type AdminTab = "tarjetas" | "eventos" | "escenarios" | "uso" | "diccionario" | "testimonios";
 
 const CATEGORIES = [
-    { value: "ecoturismo", label: "Ecoturismo", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700" },
+    { value: "naturaleza", label: "Naturaleza", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700" },
     { value: "cultura", label: "Cultura", color: "from-earth-500 to-earth-700", bg: "bg-earth-50", text: "text-earth-700" },
     { value: "talleres", label: "Talleres", color: "from-amber-500 to-amber-700", bg: "bg-amber-50", text: "text-amber-700" },
-    { value: "activismo", label: "Activismo", color: "from-water-500 to-water-700", bg: "bg-water-50", text: "text-water-700" },
 ];
 
 function getCategoryStyle(category: string) {
@@ -74,7 +80,7 @@ function LoginGate({ onAuthenticated }: { onAuthenticated: () => void }) {
             <div className="w-full max-w-md">
                 <div className="mb-8 text-center">
                     <h1 className="font-heading text-3xl font-bold text-white">
-                        <span className="text-forest-400">Agua</span> Barranca
+                        Ntejë Ñie Lengü
                     </h1>
                     <p className="mt-2 text-sm text-white/50">Panel de Administración</p>
                 </div>
@@ -749,10 +755,10 @@ function CalendarMini({ events }: { events: Event[] }) {
     const eventDays = new Set(
         events
             .filter((e) => {
-                const d = new Date(e.date);
+                const d = parseEventDate(e.date);
                 return d.getFullYear() === year && d.getMonth() === month;
             })
-            .map((e) => new Date(e.date).getDate())
+            .map((e) => parseEventDate(e.date).getDate())
     );
 
     const prev = () => setCurrentMonth(new Date(year, month - 1, 1));
@@ -840,7 +846,7 @@ function EventListItem({
     const [deleting, setDeleting] = useState(false);
     const [editing, setEditing] = useState(false);
     const style = getCategoryStyle(event.category);
-    const date = new Date(event.date);
+    const date = parseEventDate(event.date);
     const dateStr = date.toLocaleDateString("es-MX", {
         day: "numeric",
         month: "short",
@@ -936,7 +942,7 @@ function AddEventForm({
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
-    const [category, setCategory] = useState("ecoturismo");
+    const [category, setCategory] = useState("naturaleza");
     const [tagsInput, setTagsInput] = useState("");
     const [registrationLink, setRegistrationLink] = useState("");
     const [file, setFile] = useState<File | null>(null);
@@ -1001,7 +1007,7 @@ function AddEventForm({
             const payload: any = {
                 title,
                 description,
-                date: new Date(date).toISOString(),
+                date: new Date(`${date}T12:00:00`).toISOString(),
                 category,
                 tags,
             };
@@ -1033,7 +1039,7 @@ function AddEventForm({
             setTitle("");
             setDescription("");
             setDate("");
-            setCategory("ecoturismo");
+            setCategory("naturaleza");
             setTagsInput("");
             setRegistrationLink("");
             setFile(null);
@@ -1396,7 +1402,7 @@ function AdminDashboard() {
                 <div className="mx-auto flex max-w-6xl items-center justify-between">
                     <div>
                         <h1 className="font-heading text-xl font-bold text-white">
-                            <span className="text-forest-400">Agua</span> Barranca — Admin
+                            <span className="text-forest-400">Ntejë Ñie</span> Lengü — Admin
                         </h1>
                         <p className="mt-1 text-xs text-white/40">
                             Gestión de contenido del sitio

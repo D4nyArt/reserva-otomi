@@ -153,7 +153,7 @@ function PositionGrid({
                         }}
                     >
                         <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 transition-all ${el.id === activeElementId
+                            className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 transition-all overflow-hidden ${el.id === activeElementId
                                 ? "border-amber-400 bg-white ring-2 ring-amber-400/50"
                                 : "border-white/60 bg-white/90"
                                 }`}
@@ -162,9 +162,9 @@ function PositionGrid({
                                 <Image
                                     src={el.image_url}
                                     alt={el.spanish_word}
-                                    width={28}
-                                    height={28}
-                                    className="rounded-full object-cover"
+                                    width={40}
+                                    height={40}
+                                    className="object-contain scale-110"
                                     unoptimized
                                 />
                             ) : (
@@ -395,14 +395,14 @@ function ElementListItem({
                 }`}
             onClick={() => onSelect(element.id)}
         >
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
                 {element.image_url ? (
                     <Image
                         src={element.image_url}
                         alt={element.spanish_word}
-                        width={24}
-                        height={24}
-                        className="rounded-full object-cover"
+                        width={32}
+                        height={32}
+                        className="object-contain scale-110"
                         unoptimized
                     />
                 ) : (

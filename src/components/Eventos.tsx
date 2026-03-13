@@ -1,15 +1,21 @@
 "use client";
 
+/** Shift midnight-UTC dates to noon so getDate() etc. stay on the correct
+ *  calendar day regardless of the browser's local timezone offset.  */
+function parseEventDate(dateStr: string): Date {
+    const normalized = dateStr.replace("T00:00:00", "T12:00:00");
+    return new Date(normalized);
+}
+
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { getEvents, type Event } from "@/lib/supabase";
 
 /* ─── Category config ─── */
 const CATEGORIES = [
-    { value: "ecoturismo", label: "Ecoturismo", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700", dot: "bg-forest-400" },
+    { value: "naturaleza", label: "Naturaleza", color: "from-forest-500 to-forest-700", bg: "bg-forest-50", text: "text-forest-700", dot: "bg-forest-400" },
     { value: "cultura", label: "Cultura", color: "from-earth-500 to-earth-700", bg: "bg-earth-50", text: "text-earth-700", dot: "bg-earth-400" },
     { value: "talleres", label: "Talleres", color: "from-amber-500 to-amber-700", bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-400" },
-    { value: "activismo", label: "Activismo", color: "from-water-500 to-water-700", bg: "bg-water-50", text: "text-water-700", dot: "bg-water-400" },
 ];
 
 function getCategoryStyle(category: string) {
@@ -18,15 +24,15 @@ function getCategoryStyle(category: string) {
 
 /* ─── Fallback mock events ─── */
 const fallbackEvents: Event[] = [
-    { id: "1", title: "Senderismo en la Reserva", description: "Recorrido guiado por los senderos de la reserva natural, con avistamiento de aves y flora endémica.", date: "2026-03-15T09:00:00-06:00", category: "ecoturismo", tags: ["senderismo", "avistamientos"], registration_link: "https://example.com/register-senderismo", image_url: null, created_at: "" },
+    { id: "1", title: "Senderismo en la Reserva", description: "Recorrido guiado por los senderos de la reserva natural, con avistamiento de aves y flora endémica.", date: "2026-03-15T09:00:00-06:00", category: "naturaleza", tags: ["senderismo", "avistamientos"], registration_link: "https://example.com/register-senderismo", image_url: null, created_at: "" },
     { id: "2", title: "Taller de Lengua Otomí", description: "Sesión introductoria a la lengua Hñähñu con hablantes nativos de la comunidad.", date: "2026-03-22T10:00:00-06:00", category: "cultura", tags: ["lengua", "comunidad"], registration_link: null, image_url: null, created_at: "" },
-    { id: "3", title: "Jornada de Reforestación", description: "Actividad comunitaria de plantación de árboles nativos en la zona de amortiguamiento.", date: "2026-04-05T08:00:00-06:00", category: "activismo", tags: ["reforestación", "voluntariado"], registration_link: "https://example.com/register-reforestacion", image_url: null, created_at: "" },
+    { id: "3", title: "Jornada de Reforestación", description: "Actividad comunitaria de plantación de árboles nativos en la zona de amortiguamiento.", date: "2026-04-05T08:00:00-06:00", category: "naturaleza", tags: ["reforestación", "voluntariado"], registration_link: "https://example.com/register-reforestacion", image_url: null, created_at: "" },
     { id: "4", title: "Taller de Medicina Tradicional", description: "Conoce las plantas medicinales de la región y sus usos ancestrales.", date: "2026-04-12T11:00:00-06:00", category: "talleres", tags: ["medicina", "herbolaria"], registration_link: null, image_url: null, created_at: "" },
 ];
 
 /* ─── Helpers ─── */
 function formatDate(dateStr: string) {
-    const d = new Date(dateStr);
+    const d = parseEventDate(dateStr);
     return { day: d.getDate(), month: d.toLocaleDateString("es-MX", { month: "short" }).toUpperCase() };
 }
 
@@ -47,17 +53,14 @@ function EventSkeleton() {
 /* ─── Event Detail Modal ─── */
 function EventModal({ event, onClose }: { event: Event; onClose: () => void }) {
     const style = getCategoryStyle(event.category);
-    const dateObj = new Date(event.date);
+    const dateObj = parseEventDate(event.date);
     const fullDate = dateObj.toLocaleDateString("es-MX", {
         weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric",
     });
-    const time = dateObj.toLocaleTimeString("es-MX", {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
+
 
     const handleKeyDown = useCallback(
         (e: KeyboardEvent) => {
@@ -127,7 +130,7 @@ function EventModal({ event, onClose }: { event: Event; onClose: () => void }) {
                             {style.label}
                         </span>
                         <span className="text-xs text-white/40">
-                            {fullDate} · {time}
+                            {fullDate}
                         </span>
                     </div>
 
@@ -224,8 +227,8 @@ function CalendarView({ events, activeFilter, onSelect }: { events: Event[]; act
     const [currentMonth, setCurrentMonth] = useState(() => {
         // Default to the month of the first upcoming event, or current month
         const now = new Date();
-        const first = events.find((e) => new Date(e.date) >= now);
-        return first ? new Date(new Date(first.date).getFullYear(), new Date(first.date).getMonth(), 1) : new Date(now.getFullYear(), now.getMonth(), 1);
+        const first = events.find((e) => parseEventDate(e.date) >= now);
+        return first ? new Date(parseEventDate(first.date).getFullYear(), parseEventDate(first.date).getMonth(), 1) : new Date(now.getFullYear(), now.getMonth(), 1);
     });
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
@@ -244,7 +247,7 @@ function CalendarView({ events, activeFilter, onSelect }: { events: Event[]; act
     const eventsByDay: Record<string, Event[]> = {};
     for (const event of events) {
         if (activeFilter && event.category !== activeFilter) continue;
-        const d = new Date(event.date);
+        const d = parseEventDate(event.date);
         if (d.getFullYear() === year && d.getMonth() === month) {
             const key = d.getDate().toString();
             eventsByDay[key] = [...(eventsByDay[key] ?? []), event];
@@ -366,7 +369,6 @@ function CalendarView({ events, activeFilter, onSelect }: { events: Event[]; act
                         <div className="space-y-4 overflow-y-auto" style={{ maxHeight: "480px" }}>
                             {selectedEvents.map((ev) => {
                                 const style = getCategoryStyle(ev.category);
-                                const time = new Date(ev.date).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
                                 return (
                                     <div
                                         key={ev.id}
@@ -377,7 +379,6 @@ function CalendarView({ events, activeFilter, onSelect }: { events: Event[]; act
                                             <span className={`${style.bg} ${style.text} rounded-full px-2.5 py-0.5 text-xs font-semibold`}>
                                                 {style.label}
                                             </span>
-                                            <span className="text-xs text-white/30">{time}</span>
                                         </div>
                                         <h4 className="font-heading mb-1 text-sm font-bold text-white">{ev.title}</h4>
                                         <p className="mb-3 text-xs leading-relaxed text-white/50">{ev.description}</p>
@@ -503,8 +504,8 @@ export default function Eventos() {
                             </span>
                         </h2>
                         <p className="mx-auto max-w-2xl text-white/60">
-                            Únete a nuestras actividades de ecoturismo, cultura, talleres y
-                            activismo. Cada evento es una oportunidad para conectar con la
+                            Únete a nuestras actividades de naturaleza, cultura y talleres.
+                            Cada evento es una oportunidad para conectar con la
                             naturaleza y la comunidad.
                         </p>
                     </div>

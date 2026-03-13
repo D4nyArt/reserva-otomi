@@ -4,10 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 const CATEGORY_LABELS: Record<string, string> = {
-    ecoturismo: "Ecoturismo",
+    naturaleza: "Naturaleza",
     cultura: "Cultura",
     talleres: "Talleres",
-    activismo: "Activismo",
 };
 
 interface SectionCardProps {
@@ -184,6 +183,20 @@ export default function SectionCard({
                     <p className="line-clamp-3 text-sm leading-relaxed text-charcoal/70">
                         {shortDescription}
                     </p>
+                    {clickable && (
+                        <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-forest-600 transition-colors group-hover:text-forest-500">
+                            Ver más
+                            <svg
+                                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </span>
+                    )}
                 </div>
 
                 {/* Bottom accent line */}

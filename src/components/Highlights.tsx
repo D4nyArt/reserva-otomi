@@ -58,7 +58,7 @@ const fallbackPreservacion = [
         long_description:
             "Documentamos y protegemos la extraordinaria diversidad de hongos del bosque de niebla, un ecosistema único que alberga especies endémicas de gran valor ecológico.",
         display_order: 1,
-        category: "ecoturismo",
+        category: "naturaleza",
         created_at: "",
     },
     {
@@ -71,7 +71,7 @@ const fallbackPreservacion = [
         long_description:
             "Programas activos de reforestación con árboles nativos para restaurar los ecosistemas degradados y garantizar la biodiversidad de la región.",
         display_order: 2,
-        category: "activismo",
+        category: "naturaleza",
         created_at: "",
     },
     {
@@ -84,7 +84,7 @@ const fallbackPreservacion = [
         long_description:
             "Protegemos los manantiales, ríos y el embalse natural que abastecen a toda la región, asegurando el acceso al agua para las generaciones futuras.",
         display_order: 3,
-        category: "ecoturismo",
+        category: "naturaleza",
         created_at: "",
     },
 ];

@@ -118,6 +118,7 @@ function HighlightSection({
     loading,
     tagLabel,
     tagColor,
+    youtubeVideoId,
 }: {
     id: string;
     bgClass: string;
@@ -132,6 +133,7 @@ function HighlightSection({
     loading: boolean;
     tagLabel: string;
     tagColor: string;
+    youtubeVideoId?: string;
 }) {
     return (
         <section id={id} className={`relative ${bgClass} py-24`}>
@@ -155,6 +157,23 @@ function HighlightSection({
                     </h2>
                     <p className="mx-auto max-w-2xl text-charcoal/60">{subtitle}</p>
                 </div>
+
+                {youtubeVideoId && (
+                    <div className="mx-auto mb-16 w-full max-w-4xl">
+                        <div className="overflow-hidden rounded-2xl border border-forest-100 shadow-lg" style={{ aspectRatio: '16/9' }}>
+                            <iframe
+                                title="Video de la Reserva Ecológica Otomí"
+                                src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                loading="lazy"
+                            />
+                        </div>
+                    </div>
+                )}
 
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {loading
@@ -223,6 +242,7 @@ export default function Highlights() {
                 loading={loading}
                 tagLabel="Raíces"
                 tagColor="bg-earth-500"
+                youtubeVideoId="OHNnaI9dcAQ"
             />
             <HighlightSection
                 id="preservacion"
